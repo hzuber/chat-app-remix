@@ -1,0 +1,99 @@
+$theme-primary: #125B9A;
+$theme-secondary: #0B8494;
+$theme-tertiary: #f05a66;
+$theme-accent: #FFBE98;
+$shadow-gray: #c0cfdf6b;
+$text-dark: #003285;
+$form-elem-padding: 5px 10px;
+$form-elem-radius: 3px;
+
+@mixin submitButton{
+    border-radius: $form-elem-radius;
+    background:$theme-primary;
+    color:white;
+    padding: $form-elem-padding;
+    padding-left: 25px;
+    padding-right:25px;
+    max-width: 300px;
+    text-transform: uppercase;
+    width:100%;
+    letter-spacing: 1px;
+    font-size:1.2rem;
+    font-weight:300;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    &:hover{
+        background-color: $theme-tertiary;
+    }
+}
+
+@mixin card {
+    border-radius: 10px;
+    box-shadow: $shadow-gray 0 5px 20px;
+    padding:4%;
+    form{
+        display:flex;
+        flex-direction: column;
+        align-items: space-evenly;
+        input{
+            border:1px solid $theme-primary;
+            margin: 3px 0 10px;
+            border-radius:$form-elem-radius;
+            padding:$form-elem-padding;
+            outline-color:$theme-secondary
+        }
+    }
+}
+
+body{
+    min-height: 100vh;
+    min-width: 100vw;
+    display:flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-family: 'Montserrat',
+        "Inter",
+          "ui-sans-serif",
+          "system-ui",
+          "sans-serif",
+          'Apple Color Emoji',
+          'Segoe UI Emoji',
+          'Segoe UI Symbol',
+          "Noto Color Emoji";
+          color: $text-dark;
+          h1{
+            font-weight:800;
+            font-size:2.5rem;
+          }
+          h2{
+            font-weight:800;
+            font-size:2.25rem;
+          }
+          h3{
+            font-weight:800;
+            font-size:2rem;
+          }
+          h4{
+            font-weight:700;
+            font-size:1.8rem;
+          }
+          h5{
+            font-weight:700;
+            font-size:1.6rem;
+          }
+          h6{
+            font-weight:600;
+            font-size:1.35rem;
+          }
+          p{
+            font-weight:400;
+            font-size:1rem;
+          }
+          a{
+            color: $theme-secondary;
+            transition:all 0.3s ease-in-out;
+            &:hover{
+                color: $theme-accent
+            }
+          }
+}

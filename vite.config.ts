@@ -13,4 +13,11 @@ export default defineConfig({
     }),
     tsconfigPaths(),
   ],
+  css: {
+    preprocessorOptions: {
+      scss: {
+        additionalData: `@import "./app/assets/styles/Global.scss";`,
+      },
+    },
+  },
 });

@@ -1,0 +1,18 @@
+[
+  {
+    "id": "6ca6eabf-d89d-4552-bdd4-4e2e46c6b950",
+    "email": "formData.get(\"email\")?.toString()",
+    "password": "$2a$10$X0pog5qghCG93EEU9VLJMe8xtby.6L1m/wtuLMxNtkVeUCWYj0Vua",
+    "username": "formData.get(\"username\")?.toString()",
+    "icon": "formData.get(\"icon\")?.toString()",
+    "chats": []
+  },
+  {
+    "id": "7b3f0b86-e5b3-46a1-9161-17572554feb5",
+    "email": "me@me.com",
+    "password": "$2a$10$xkuzAceBK/BfTFC5FJgq2.ciYYZE3oDyLtO3Sp6vjo8iMpGUGuKeS",
+    "username": "mem",
+    "icon": null,
+    "chats": []
+  }
+]
