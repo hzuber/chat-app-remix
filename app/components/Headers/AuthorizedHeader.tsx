@@ -1,5 +1,10 @@
 import React from "react";
+import { User } from "types";
 
-export const AuthorizedHeader = () => {
-  return <div>AuthorizedHeader</div>;
+interface Props {
+  user: User;
+}
+
+export const AuthorizedHeader = ({ user }: Props) => {
+  return <div>Hi {user.username ? user.username : user.email}!</div>;
 };

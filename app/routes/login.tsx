@@ -1,19 +1,15 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { Form, json, useActionData } from "@remix-run/react";
+import { Form, json, useActionData, useLoaderData } from "@remix-run/react";
 import { authenticator } from "~/services/auth.server";
-import { UnauthorizedLayout } from "~/components/Layouts/UnauthorizedLayout";
+import { Layout } from "~/components/Layout";
 import { FormCard } from "~/components/FormCard/FormCard";
 import { commitSession, getSession } from "~/services/session.server";
 import { useState } from "react";
 
-// First we create our UI with the form doing a POST and the inputs with the
-// names we are going to use in the strategy
 export default function Login() {
-  //   const sessionError = useActionData<typeof action>();
-  //   const [error, seterror] = useState<string>();
-  //   sessionError && seterror(sessionError.message);
+  const sessionError = useLoaderData<typeof loader>();
   return (
-    <UnauthorizedLayout>
+    <Layout>
       <FormCard classes="max-w-lg">
         <h5>Login</h5>
         <p>
@@ -39,27 +35,24 @@ export default function Login() {
               placeholder="Enter your password"
             />
           </div>
+          <p className="text-red-600 min-h-4 text-sm leading-4">
+            {sessionError && (
+              <span
+                dangerouslySetInnerHTML={{ __html: sessionError.error.message }}
+              />
+            )}
+          </p>
           <button className="mt-5 mx-auto">Login</button>
-          {/* {error && (
-            <p
-              className="text-red-600 min-h-4 text-sm leading-4"
-              dangerouslySetInnerHTML={{ __html: error }}
-            />
-          )} */}
         </Form>
       </FormCard>
-    </UnauthorizedLayout>
+    </Layout>
   );
 }
 
 export async function action({ request }: ActionFunctionArgs) {
   const session = await getSession(request.headers.get("cookie"));
   const sessionError = session.get(authenticator.sessionErrorKey);
-  console.log("actionerror", sessionError);
-
-  // console.log("auth", auth);
   if (sessionError) {
-    //   console.log("auth2", auth);
     return sessionError;
   } else {
     return await authenticator.authenticate("user-login", request, {
@@ -75,7 +68,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
   });
   const session = await getSession(request.headers.get("cookie"));
   const error = session.get(authenticator.sessionErrorKey);
-  console.error("loginloader", error, "auth", auth);
   if (error) {
     return json(
       { error },

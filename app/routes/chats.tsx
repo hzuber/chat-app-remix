@@ -1,15 +1,21 @@
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { authenticator } from "~/services/auth.server";
-import { getSession } from "~/services/session.server";
+import { Layout } from "~/components/Layout";
+import { useLoaderData } from "@remix-run/react";
 
-export const Chats = () => {
-  return <div>C</div>;
-};
+export default function Chats() {
+  const auth = useLoaderData<typeof loader>();
+  console.log("chat auth", auth);
+  return (
+    <Layout>
+      <p>hi</p>
+    </Layout>
+  );
+}
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const auth = await authenticator.isAuthenticated(request, {});
-  const session = await getSession(request.headers.get("cookie"));
-  const error = session.get(authenticator.sessionErrorKey);
-  console.log("auth", auth, "errorkey", error);
-  return null;
+  const auth = await authenticator.isAuthenticated(request, {
+    failureRedirect: "/login",
+  });
+  return auth;
 }

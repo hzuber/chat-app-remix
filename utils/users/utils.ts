@@ -16,7 +16,8 @@ export async function hashPassword(password: string) {
 }
 
 export async function comparePasswords(password: string, hash: string) {
-  return bcrypt.compare(password, hash);
+  console.log("bcrypt", password, hash);
+  return await bcrypt.compare(password, hash);
 }
 
 async function readDB() {
@@ -81,23 +82,15 @@ export async function signup(
 }
 
 export async function login(email: string, password: string) {
-  // let response: Response;
-  console.log("login ran");
   const db = await readDB();
-  console.log("db is ", db);
   const user = db.find((user: User) => user.email === email);
-  if (!user || !(await bcrypt.compare(password, user.password))) {
-    // response = { status: 401, error: "Invalid credentials", data: null };
-    console.log("no user");
+  if (!user) {
     throw new Error("User not found");
+  }
+  const comparison = await comparePasswords(password, user.password);
+  if (!comparison) {
+    throw new Error("Incorrect password");
   } else {
-    // response = {
-    //   status: 200,
-    //   error: null,
-    //   data: user,
-    // };
-    console.log("login user", user);
     return user;
   }
-  // return response;
 }

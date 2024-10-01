@@ -1,7 +1,7 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
 import { authenticator } from "~/services/auth.server";
-import { UnauthorizedLayout } from "~/components/Layouts/UnauthorizedLayout";
+import { Layout } from "~/components/Layout";
 import { getSession } from "~/services/session.server";
 import { useState } from "react";
 import { FormCard } from "~/components/FormCard/FormCard";
@@ -41,7 +41,7 @@ export default function Signup() {
   };
 
   return (
-    <UnauthorizedLayout>
+    <Layout>
       <FormCard classes="max-w-lg">
         <h5>Sign Up</h5>
         <p>
@@ -99,7 +99,7 @@ export default function Signup() {
           )}
         </Form>
       </FormCard>
-    </UnauthorizedLayout>
+    </Layout>
   );
 }
 

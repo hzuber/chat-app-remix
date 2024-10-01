@@ -20,6 +20,7 @@ authenticator.use(
   new FormStrategy(async ({ form }) => {
     const email = form.get("email")?.toString();
     const password = form.get("password")?.toString();
+    console.log("email", email, "passowrd", password);
     // const session = await sessionStorage.getSession();
 
     const user: User = email && password && (await login(email, password));
@@ -37,8 +38,6 @@ authenticator.use(
     const password = form.get("password")?.toString();
     const username = form.get("username")?.toString();
     const icon = form.get("icon")?.toString();
-    const session = await sessionStorage.getSession();
-    const sessionError = session.get(authenticator.sessionErrorKey);
     let errorText = "Unable to perform action";
     if (email && password) {
       try {
@@ -53,6 +52,7 @@ authenticator.use(
         }
         if (response?.error) {
           errorText = response.error;
+          console.log("auth.server", response.error);
         }
         throw new AuthorizationError(errorText);
       } catch (err) {
