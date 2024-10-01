@@ -16,7 +16,6 @@ export default function Signup() {
   const sessionError = useLoaderData<typeof loader>();
   const [errors, setErrors] = useState<Errors>({});
   const [password, setPassword] = useState("");
-  sessionError && setErrors({ ...errors, password: sessionError.message });
 
   function checkPwd(pw: string) {
     setPassword(pw);
@@ -36,12 +35,11 @@ export default function Signup() {
   };
 
   const disableSubmitButton = () => {
-    if (errors.general || errors.password || errors.verify) {
+    if (errors.password || errors.verify) {
       return true;
     } else return false;
   };
 
-  console.log("errors", errors, "sessionError", sessionError);
   return (
     <UnauthorizedLayout>
       <FormCard classes="max-w-lg">
@@ -90,13 +88,13 @@ export default function Signup() {
               onChange={(e) => checkPasswordVerification(e.target.value)}
             />
           </div>
-          <button disabled={disableSubmitButton()} className="mt-5 mx-auto">
+          <button disabled={disableSubmitButton()} className="mt-2 mx-auto">
             Sign Up
           </button>
-          {errors?.general && (
+          {sessionError && (
             <p
-              className="text-red-600 min-h-4 text-sm leading-4"
-              dangerouslySetInnerHTML={{ __html: errors.general }}
+              className="text-red-600 min-h-4 text-sm leading-4 mt-3"
+              dangerouslySetInnerHTML={{ __html: sessionError.message }}
             />
           )}
         </Form>
@@ -113,18 +111,16 @@ export async function action({ request }: ActionFunctionArgs) {
     successRedirect: "/chats",
     failureRedirect: "/signup",
   });
-  console.log("auth", auth);
   if (sessionError) {
     return sessionError;
   } else {
-    return null;
+    return auth;
   }
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const session = await getSession(request.headers.get("cookie"));
   const sessionError = session.get(authenticator.sessionErrorKey);
-  console.log("session error", sessionError);
   await authenticator.isAuthenticated(request, {
     successRedirect: "/chats",
   });

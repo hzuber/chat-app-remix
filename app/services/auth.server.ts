@@ -1,22 +1,31 @@
 import { Authenticator, AuthorizationError } from "remix-auth";
 import { FormStrategy } from "remix-auth-form";
 import { Response, User } from "../../types";
-import { getSession, sessionStorage } from "~/services/session.server";
+import { sessionStorage } from "~/services/session.server";
 import { login, signup } from "utils/users/utils";
 
-export const authenticator = new Authenticator<User>(sessionStorage);
+export const authenticator = new Authenticator<User>(sessionStorage, {
+  sessionErrorKey: "chat-app-error-key",
+});
+// const session = await sessionStorage.getSession();
+// const sessionError = session.get(authenticator.sessionErrorKey);
+// console.log(
+//   "login auth",
+//   authenticator.sessionErrorKey,
+//   "login auth2",
+//   sessionError
+// );
 
 authenticator.use(
   new FormStrategy(async ({ form }) => {
     const email = form.get("email")?.toString();
     const password = form.get("password")?.toString();
-    console.log(email, password);
+    // const session = await sessionStorage.getSession();
 
     const user: User = email && password && (await login(email, password));
-    console.log("user is", user);
-    const theSessionUser = (await getSession()).get("user");
-    const theSessionEmail = (await getSession()).get("email");
-    console.log("session", theSessionUser, theSessionEmail);
+    // const theSessionUser = session.get("user");
+    // const theSessionEmail = session.get("email");
+    // console.log("session", theSessionUser, theSessionEmail);
     return user;
   }),
   "user-login"
@@ -28,7 +37,8 @@ authenticator.use(
     const password = form.get("password")?.toString();
     const username = form.get("username")?.toString();
     const icon = form.get("icon")?.toString();
-    console.log(email, password);
+    const session = await sessionStorage.getSession();
+    const sessionError = session.get(authenticator.sessionErrorKey);
     let errorText = "Unable to perform action";
     if (email && password) {
       try {
@@ -54,45 +64,3 @@ authenticator.use(
   }),
   "user-signup"
 );
-
-// authenticator.use(
-//   new FormStrategy(async ({ form, context }) => {
-//     // const {...context} = context
-//     // console.log("context", context);
-//     // let response: Response = {
-//     //   status: 400,
-//     //   data: {},
-//     //   error: "There was a problem processing your request.",
-//     // };
-//     // const email = form.get("email")?.toString();
-//     // const password = form.get("password")?.toString();
-//     // const username = form.get("username")?.toString();
-//     // const icon = form.get("icon")?.toString();
-//     // console.log(form, email, password);
-//     // if (email && password) {
-//     //   const user: User = await signup(
-//     //     email,
-//     //     password,
-//     //     username && username,
-//     //     icon
-//     //   );
-//     //   // if (user) {
-//     //     const newUser: User = {
-//     //       id: user.id,
-//     //       email: email ? email : "",
-//     //       password: password ? password : "",
-//     //       username: username ? username : null,
-//     //       icon: icon ? icon : null,
-//     //       chats: null,
-//     //     };
-//     //     response = { data: { user: newUser }, status: 200, error: null };
-//     //     return newUser;
-//     //   // }
-//     // }
-//     // return
-//     const user = {context.user}
-//   }),
-//   // each strategy has a name and can be changed to use another one
-//   // same strategy multiple times, especially useful for the OAuth2 strategy.
-//   "user-signup"
-// );

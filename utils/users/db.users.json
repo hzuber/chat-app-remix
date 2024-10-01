@@ -38,5 +38,21 @@
     "username": "hello",
     "icon": null,
     "chats": []
+  },
+  {
+    "id": "ba791977-daa1-45e3-b191-58ad57bc997f",
+    "email": "me@me",
+    "password": "$2a$10$3rhic9y0.Sf0WP8nEsDi0O8mVukvhG3wcSaD23l2N9jsebuudOVOq",
+    "username": "me",
+    "icon": null,
+    "chats": []
+  },
+  {
+    "id": "94e11fee-a49b-4a82-a624-567efc530134",
+    "email": "hello@hello.com",
+    "password": "$2a$10$JoyXOru4Q0nQ9yAsFoxzjuHmPJHO6fvZE9y5rRUBQgWE7dku36kzm",
+    "username": "hi",
+    "icon": null,
+    "chats": []
   }
 ]
