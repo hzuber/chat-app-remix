@@ -11,6 +11,11 @@ import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
 
 import "./tailwind.css";
 import { authenticator } from "./services/auth.server";
+import { SocketProvider, socketContext } from "./socket.context";
+import { useEffect, useState } from "react";
+import { Socket } from "socket.io-client";
+import { DefaultEventsMap } from "socket.io";
+import { connect } from "./socket.client";
 
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -50,5 +55,27 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   const { user } = useLoaderData<typeof loader>();
-  return <Outlet context={user} />;
+  const [socket, setSocket] =
+    useState<Socket<DefaultEventsMap, DefaultEventsMap>>();
+
+  useEffect(() => {
+    const connection = connect();
+    console.log("connection", connection);
+    setSocket(connection);
+    return () => {
+      connection.close();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!socket) return;
+    socket.on("event", (data) => {
+      console.log(data);
+    });
+  }, [socket]);
+  return (
+    <socketContext.Provider value={socket}>
+      <Outlet context={user} />
+    </socketContext.Provider>
+  );
 }

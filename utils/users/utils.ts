@@ -51,19 +51,14 @@ export async function signup(
   username?: string,
   icon?: string
 ) {
-  //check if email exists
   const db = await readDB();
   let user: User;
   const response: Response = { status: 200, data: { user: null }, error: null };
   if (db.find((user: User) => user.email === email)) {
-    // throw new Error(
-    //   "A user with this email already exists <a href='/login'>Login</a>"
-    // );
     response.error =
       "A user with this email already exists <a className='text-red-400' href='/login'>Login</a>";
     response.status = 401;
   } else {
-    //password verification happens client side
     const hashedPassword = await hashPassword(password);
     const id = uuidv4();
     user = {
@@ -94,3 +89,9 @@ export async function login(email: string, password: string) {
     return user;
   }
 }
+
+//update function
+
+//soft delete function
+
+//hard delete function

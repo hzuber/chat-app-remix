@@ -10,9 +10,11 @@ export const meta: MetaFunction = () => {
 };
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
-  const auth = await authenticator.isAuthenticated(request);
+  const auth = await authenticator.isAuthenticated(request, {
+    failureRedirect: "/login",
+  });
   // console.log("auth", auth);
-  return null;
+  return auth;
 };
 
 export default function Index() {

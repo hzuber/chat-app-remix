@@ -11,8 +11,13 @@ import { createReadableStreamFromReadable } from "@remix-run/node";
 import { RemixServer } from "@remix-run/react";
 import { isbot } from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
+import express from "express";
+import { createServer } from "http";
+import createSocketServer from "socket.server";
+import { configDotenv } from "dotenv";
 
 const ABORT_DELAY = 5_000;
+configDotenv();
 
 export default function handleRequest(
   request: Request,
@@ -138,3 +143,8 @@ function handleBrowserRequest(
     setTimeout(abort, ABORT_DELAY);
   });
 }
+
+const app = express();
+const socket_port = process.env.VITE_SOCKET_PORT || 3002;
+const server = app.listen(socket_port, function () {});
+createSocketServer(server);

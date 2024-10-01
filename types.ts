@@ -34,6 +34,7 @@ export type UserChat = {
   lastRead: string | null;
   style: string | null;
   admin: boolean;
+  deleted?: boolean;
 };
 
 export type Response = {
