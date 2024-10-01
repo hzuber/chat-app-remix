@@ -14,5 +14,29 @@
     "username": "mem",
     "icon": null,
     "chats": []
+  },
+  {
+    "id": "79f0b93b-03f1-428d-aadc-b966ae7cad7b",
+    "email": "he@he.com",
+    "password": "$2a$10$fdJGvLO7OAssLQUyjHFMe.rOtL3KjBllwZyyDAyCgPZPIl78HxAXy",
+    "username": "he",
+    "icon": null,
+    "chats": []
+  },
+  {
+    "id": "08dc7cdb-b033-4f66-b3c9-813e28e0f9a5",
+    "email": "he@he",
+    "password": "$2a$10$4qW16bvwnw5Uw07yzBjLT.6SFm3Q9pte1D/kcy0.3lnEGfykU9r02",
+    "username": "yhyh",
+    "icon": null,
+    "chats": []
+  },
+  {
+    "id": "951a41fe-0ca1-4780-8351-90354aad4d69",
+    "email": "hello@hello",
+    "password": "$2a$10$nNEAnEwMP2wGQoX4q/c0BeNMnvZe9qV1piKDMgMg5kP/R6.agLXg.",
+    "username": "hello",
+    "icon": null,
+    "chats": []
   }
 ]

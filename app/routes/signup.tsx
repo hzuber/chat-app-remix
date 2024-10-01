@@ -1,10 +1,10 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { Form, json, useActionData, useSubmit } from "@remix-run/react";
+import { Form, useLoaderData } from "@remix-run/react";
 import { authenticator } from "~/services/auth.server";
 import { UnauthorizedLayout } from "~/components/Layouts/UnauthorizedLayout";
-import { Card } from "~/components/Card/Card";
-import { signup } from "utils/users/utils";
-import { commitSession, getSession } from "~/services/session.server";
+import { getSession } from "~/services/session.server";
+import { useState } from "react";
+import { FormCard } from "~/components/FormCard/FormCard";
 
 interface Errors {
   verify?: string | null;
@@ -13,121 +13,124 @@ interface Errors {
 }
 
 export default function Signup() {
-  const errors = useActionData<typeof action>();
-  console.log("errors", errors);
+  const sessionError = useLoaderData<typeof loader>();
+  const [errors, setErrors] = useState<Errors>({});
+  const [password, setPassword] = useState("");
+  sessionError && setErrors({ ...errors, password: sessionError.message });
+
+  function checkPwd(pw: string) {
+    setPassword(pw);
+    if (pw.length < 6) {
+      setErrors({ ...errors, password: "Minimum length is 6 characters" });
+    } else if (pw.search(/\d/) == -1) {
+      setErrors({ ...errors, password: "Does not contain a number" });
+    } else if (pw.search(/[a-zA-Z]/) == -1) {
+      setErrors({ ...errors, password: "Does not contain a letter" });
+    } else setErrors({ ...errors, password: null });
+  }
+
+  const checkPasswordVerification = (pw: string) => {
+    pw !== password
+      ? setErrors({ ...errors, verify: "Passwords don't match" })
+      : setErrors({ ...errors, verify: null });
+  };
+
+  const disableSubmitButton = () => {
+    if (errors.general || errors.password || errors.verify) {
+      return true;
+    } else return false;
+  };
+
+  console.log("errors", errors, "sessionError", sessionError);
   return (
     <UnauthorizedLayout>
-      <Card classes="max-w-lg">
+      <FormCard classes="max-w-lg">
         <h5>Sign Up</h5>
         <p>
           Already have an account? <a href="/login">Login</a>
         </p>
         <Form method="post" className="mt-5">
-          <label htmlFor="username">Username</label>
-          <input type="text" name="username" placeholder="Your Name" />
-          <label htmlFor="email">Email Address</label>
-          <input
-            type="email"
-            name="email"
-            required
-            placeholder="you@example.com"
-          />
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            name="password"
-            autoComplete="current-password"
-            required
-            placeholder="Enter your password"
-          />
-          <label htmlFor="verify">Verify Password</label>
-          <input
-            type="password"
-            name="verify"
-            required
-            placeholder="Retype password"
-          />
-          {errors?.verify && <p className="text-red-600">{errors.verify}</p>}
-          <button className="mt-5 mx-auto">Sign Up</button>
-          {errors?.general && <p className="text-red-600">{errors.general}</p>}
+          <div className="form-field">
+            <label htmlFor="username">Username</label>
+            <input type="text" name="username" placeholder="Your Name" />
+          </div>
+          <div className="form-field">
+            <label htmlFor="email">Email Address</label>
+            <input
+              type="email"
+              name="email"
+              required
+              placeholder="you@example.com"
+            />
+          </div>
+          <div className="form-field">
+            <label htmlFor="password">
+              Password{" "}
+              <span className="text-red-600 text-sm">{errors?.password}</span>
+            </label>
+            <input
+              type="password"
+              name="password"
+              autoComplete="current-password"
+              required
+              placeholder="Enter your password"
+              onChange={(e) => checkPwd(e.target.value)}
+            />
+          </div>
+          <div className="form-field">
+            <label htmlFor="verify">
+              Verify Password{" "}
+              <span className="text-red-600 text-sm ">{errors?.verify}</span>
+            </label>
+            <input
+              type="password"
+              name="verify"
+              required
+              placeholder="Retype password"
+              onChange={(e) => checkPasswordVerification(e.target.value)}
+            />
+          </div>
+          <button disabled={disableSubmitButton()} className="mt-5 mx-auto">
+            Sign Up
+          </button>
+          {errors?.general && (
+            <p
+              className="text-red-600 min-h-4 text-sm leading-4"
+              dangerouslySetInnerHTML={{ __html: errors.general }}
+            />
+          )}
         </Form>
-      </Card>
+      </FormCard>
     </UnauthorizedLayout>
   );
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  //   const session = await getSession();
-
-  //FORM DATA CAN"T BE READ TWICE
-  const formData = await request.formData();
-  const errors: Errors = {};
-  //   console.log(request, formData);
-  if (formData.get("password") !== formData.get("verify")) {
-    errors.verify = "Passwords do not match";
-    console.log("errors action", errors);
-    return json(errors);
-  }
-  //   return null;
-  //   try {
-  //     // const email = formData.get("email")?.toString();
-  //     // const password = formData.get("password")?.toString();
-  //     // const username = formData.get("username")?.toString();
-  //     // const icon = formData.get("icon")?.toString();
-
-  //     const email = 'formData.get("email")?.toString()';
-  //     const password = 'formData.get("password")?.toString()';
-  //     const username = 'formData.get("username")?.toString()';
-  //     const icon = 'formData.get("icon")?.toString()';
-
-  //     try {
-  //       //   email && formData.set("email", email);
-  //       //   password && formData.set("password", password);
-  //       //   username && formData.set("username", username);
-  //       //   icon && formData.set("icon", icon);
-  //       console.log(email, password);
-  //       const user =
-  //         email &&
-  //         password &&
-  //         (await signup(email, password, username && username, icon));
-  //       console.log("signup", user);
-
-  //       if (user) {
-  //         // formData.set("id", user.id);
-  //         // formData.append("id", user.id);
-  //         // console.log("formData", formData);
-  //         session.set("user", user);
-  //         // const committedCookie = await commitSession(session);
-
-  //         const auth = await authenticator.authenticate("user-signup", request, {
-  //           context: { user },
-  //           successRedirect: "/chats",
-  //           failureRedirect: "/signup",
-  //         });
-  //         console.log("auth", auth);
-  //         return auth;
-  //       }
-  //     } catch (err) {
-  //       console.log("err", err);
-  //       errors.general = "Unable to process request";
-  //       return json(errors);
-  //     }
-  //   } catch (err) {
-  //     console.log("err", err);
-  //     errors.general = "Unable to process request";
-  //     return json(errors);
-  //   }
+  const session = await getSession(request.headers.get("cookie"));
+  const sessionError = session.get(authenticator.sessionErrorKey);
 
   const auth = await authenticator.authenticate("user-signup", request, {
     successRedirect: "/chats",
     failureRedirect: "/signup",
   });
   console.log("auth", auth);
-  return json(errors);
+  if (sessionError) {
+    return sessionError;
+  } else {
+    return null;
+  }
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  return await authenticator.isAuthenticated(request, {
+  const session = await getSession(request.headers.get("cookie"));
+  const sessionError = session.get(authenticator.sessionErrorKey);
+  console.log("session error", sessionError);
+  await authenticator.isAuthenticated(request, {
     successRedirect: "/chats",
   });
+  if (sessionError) {
+    return sessionError;
+  } else {
+    return null;
+  }
 }

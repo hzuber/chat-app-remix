@@ -3,13 +3,14 @@ import { Form } from "@remix-run/react";
 import { authenticator } from "~/services/auth.server";
 import { UnauthorizedLayout } from "~/components/Layouts/UnauthorizedLayout";
 import { Card } from "~/components/Card/Card";
+import { FormCard } from "~/components/FormCard/FormCard";
 
 // First we create our UI with the form doing a POST and the inputs with the
 // names we are going to use in the strategy
 export default function Screen() {
   return (
     <UnauthorizedLayout>
-      <Card classes="max-w-lg">
+      <FormCard classes="max-w-lg">
         <h5>Login</h5>
         <p>
           Don&apos;t have an account yet? <a href="/signup">Sign Up</a>
@@ -32,7 +33,7 @@ export default function Screen() {
           />
           <button className="mt-5 mx-auto">Login</button>
         </Form>
-      </Card>
+      </FormCard>
     </UnauthorizedLayout>
   );
 }

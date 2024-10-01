@@ -59,7 +59,7 @@ export async function signup(
     //   "A user with this email already exists <a href='/login'>Login</a>"
     // );
     response.error =
-      "A user with this email already exists <a href='/login'>Login</a>";
+      "A user with this email already exists <a className='text-red-400' href='/login'>Login</a>";
     response.status = 401;
   } else {
     //password verification happens client side

@@ -1,0 +1,6 @@
+.form-card{
+    @include card;
+    button{
+        @include submitButton
+    }
+}
