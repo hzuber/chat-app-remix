@@ -90,6 +90,28 @@ export async function login(email: string, password: string) {
   }
 }
 
+//getAllUsers
+export async function getAllUsers() {
+  console.log("run get all users");
+  const db = await readDB();
+  if (!db) {
+    throw new Error("Unable to read database");
+  }
+  return db;
+}
+
+//getUser(id)
+export async function getUser(id: string) {
+  const db = await readDB();
+  const user = db.find((user: User) => user.id === id);
+  console.log("get user", id);
+  if (!user) {
+    throw new Error("User not found");
+  } else {
+    return user;
+  }
+}
+
 //update function
 
 //soft delete function

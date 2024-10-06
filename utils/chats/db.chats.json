@@ -1,1 +1,104 @@
-[]
+[
+  {
+    "id": "4dd26cdf-3b27-4fac-ace5-eba0d3130f33",
+    "members": [
+      "ba791977-daa1-45e3-b191-58ad57bc997f",
+      "6ca6eabf-d89d-4552-bdd4-4e2e46c6b950"
+    ],
+    "icon": null,
+    "description": null,
+    "chatName": null,
+    "lastSent": null,
+    "messages": [],
+    "admins": [
+      "ba791977-daa1-45e3-b191-58ad57bc997f",
+      "6ca6eabf-d89d-4552-bdd4-4e2e46c6b950"
+    ],
+    "type": "private_chat"
+  },
+  {
+    "id": "6176d7f7-e08f-48f1-831c-b2479247c0e3",
+    "members": [
+      "ba791977-daa1-45e3-b191-58ad57bc997f",
+      "7b3f0b86-e5b3-46a1-9161-17572554feb5"
+    ],
+    "icon": null,
+    "description": null,
+    "chatName": null,
+    "lastSent": null,
+    "messages": [],
+    "admins": [
+      "ba791977-daa1-45e3-b191-58ad57bc997f",
+      "7b3f0b86-e5b3-46a1-9161-17572554feb5"
+    ],
+    "type": "private_chat"
+  },
+  {
+    "id": "b265b855-0b3b-412c-889d-fe6defc74f05",
+    "members": [
+      "ba791977-daa1-45e3-b191-58ad57bc997f",
+      "79f0b93b-03f1-428d-aadc-b966ae7cad7b"
+    ],
+    "icon": null,
+    "description": null,
+    "chatName": null,
+    "lastSent": null,
+    "messages": [],
+    "admins": [
+      "ba791977-daa1-45e3-b191-58ad57bc997f",
+      "79f0b93b-03f1-428d-aadc-b966ae7cad7b"
+    ],
+    "type": "private_chat"
+  },
+  {
+    "id": "e91a1c33-d090-4e52-ba2b-09d1234a8dd3",
+    "members": [
+      "ba791977-daa1-45e3-b191-58ad57bc997f",
+      "08dc7cdb-b033-4f66-b3c9-813e28e0f9a5"
+    ],
+    "icon": null,
+    "description": null,
+    "chatName": null,
+    "lastSent": null,
+    "messages": [],
+    "admins": [
+      "ba791977-daa1-45e3-b191-58ad57bc997f",
+      "08dc7cdb-b033-4f66-b3c9-813e28e0f9a5"
+    ],
+    "type": "private_chat"
+  },
+  {
+    "id": "65d9279c-eb40-431f-ada4-0cdbce6dbf8a",
+    "members": [
+      "ba791977-daa1-45e3-b191-58ad57bc997f",
+      "951a41fe-0ca1-4780-8351-90354aad4d69"
+    ],
+    "icon": null,
+    "description": null,
+    "chatName": null,
+    "lastSent": null,
+    "messages": [],
+    "admins": [
+      "ba791977-daa1-45e3-b191-58ad57bc997f",
+      "951a41fe-0ca1-4780-8351-90354aad4d69"
+    ],
+    "type": "private_chat"
+  },
+  {
+    "id": "fe2868b0-4f38-4953-bc91-de3e15766e43",
+    "members": [
+      "ba791977-daa1-45e3-b191-58ad57bc997f",
+      "94e11fee-a49b-4a82-a624-567efc530134"
+    ],
+    "icon": null,
+    "description": null,
+    "chatName": null,
+    "lastSent": null,
+    "messages": [],
+    "admins": [
+      "ba791977-daa1-45e3-b191-58ad57bc997f",
+      "94e11fee-a49b-4a82-a624-567efc530134"
+    ],
+    "type": "private_chat"
+  }
+]

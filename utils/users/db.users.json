@@ -5,7 +5,17 @@
     "password": "$2a$10$X0pog5qghCG93EEU9VLJMe8xtby.6L1m/wtuLMxNtkVeUCWYj0Vua",
     "username": "formData.get(\"username\")?.toString()",
     "icon": "formData.get(\"icon\")?.toString()",
-    "chats": []
+    "chats": [
+      {
+        "chatName": "me",
+        "lastRead": null,
+        "style": null,
+        "admin": true,
+        "deleted": false,
+        "chatId": "4dd26cdf-3b27-4fac-ace5-eba0d3130f33",
+        "icon": null
+      }
+    ]
   },
   {
     "id": "7b3f0b86-e5b3-46a1-9161-17572554feb5",
@@ -13,7 +23,17 @@
     "password": "$2a$10$xkuzAceBK/BfTFC5FJgq2.ciYYZE3oDyLtO3Sp6vjo8iMpGUGuKeS",
     "username": "mem",
     "icon": null,
-    "chats": []
+    "chats": [
+      {
+        "chatName": "me",
+        "lastRead": null,
+        "style": null,
+        "admin": true,
+        "deleted": false,
+        "chatId": "6176d7f7-e08f-48f1-831c-b2479247c0e3",
+        "icon": null
+      }
+    ]
   },
   {
     "id": "79f0b93b-03f1-428d-aadc-b966ae7cad7b",
@@ -21,7 +41,17 @@
     "password": "$2a$10$fdJGvLO7OAssLQUyjHFMe.rOtL3KjBllwZyyDAyCgPZPIl78HxAXy",
     "username": "he",
     "icon": null,
-    "chats": []
+    "chats": [
+      {
+        "chatName": "me",
+        "lastRead": null,
+        "style": null,
+        "admin": true,
+        "deleted": false,
+        "chatId": "b265b855-0b3b-412c-889d-fe6defc74f05",
+        "icon": null
+      }
+    ]
   },
   {
     "id": "08dc7cdb-b033-4f66-b3c9-813e28e0f9a5",
@@ -29,7 +59,17 @@
     "password": "$2a$10$4qW16bvwnw5Uw07yzBjLT.6SFm3Q9pte1D/kcy0.3lnEGfykU9r02",
     "username": "yhyh",
     "icon": null,
-    "chats": []
+    "chats": [
+      {
+        "chatName": "me",
+        "lastRead": null,
+        "style": null,
+        "admin": true,
+        "deleted": false,
+        "chatId": "e91a1c33-d090-4e52-ba2b-09d1234a8dd3",
+        "icon": null
+      }
+    ]
   },
   {
     "id": "951a41fe-0ca1-4780-8351-90354aad4d69",
@@ -37,7 +77,17 @@
     "password": "$2a$10$nNEAnEwMP2wGQoX4q/c0BeNMnvZe9qV1piKDMgMg5kP/R6.agLXg.",
     "username": "hello",
     "icon": null,
-    "chats": []
+    "chats": [
+      {
+        "chatName": "me",
+        "lastRead": null,
+        "style": null,
+        "admin": true,
+        "deleted": false,
+        "chatId": "65d9279c-eb40-431f-ada4-0cdbce6dbf8a",
+        "icon": null
+      }
+    ]
   },
   {
     "id": "ba791977-daa1-45e3-b191-58ad57bc997f",
@@ -45,7 +95,62 @@
     "password": "$2a$10$3rhic9y0.Sf0WP8nEsDi0O8mVukvhG3wcSaD23l2N9jsebuudOVOq",
     "username": "me",
     "icon": null,
-    "chats": []
+    "chats": [
+      {
+        "chatName": "formData.get(\"username\")?.toString()",
+        "lastRead": null,
+        "style": null,
+        "admin": true,
+        "deleted": false,
+        "chatId": "4dd26cdf-3b27-4fac-ace5-eba0d3130f33",
+        "icon": "formData.get(\"icon\")?.toString()"
+      },
+      {
+        "chatName": "mem",
+        "lastRead": null,
+        "style": null,
+        "admin": true,
+        "deleted": false,
+        "chatId": "6176d7f7-e08f-48f1-831c-b2479247c0e3",
+        "icon": null
+      },
+      {
+        "chatName": "he",
+        "lastRead": null,
+        "style": null,
+        "admin": true,
+        "deleted": false,
+        "chatId": "b265b855-0b3b-412c-889d-fe6defc74f05",
+        "icon": null
+      },
+      {
+        "chatName": "yhyh",
+        "lastRead": null,
+        "style": null,
+        "admin": true,
+        "deleted": false,
+        "chatId": "e91a1c33-d090-4e52-ba2b-09d1234a8dd3",
+        "icon": null
+      },
+      {
+        "chatName": "hello",
+        "lastRead": null,
+        "style": null,
+        "admin": true,
+        "deleted": false,
+        "chatId": "65d9279c-eb40-431f-ada4-0cdbce6dbf8a",
+        "icon": null
+      },
+      {
+        "chatName": "hi",
+        "lastRead": null,
+        "style": null,
+        "admin": true,
+        "deleted": false,
+        "chatId": "fe2868b0-4f38-4953-bc91-de3e15766e43",
+        "icon": null
+      }
+    ]
   },
   {
     "id": "94e11fee-a49b-4a82-a624-567efc530134",
@@ -53,6 +158,16 @@
     "password": "$2a$10$JoyXOru4Q0nQ9yAsFoxzjuHmPJHO6fvZE9y5rRUBQgWE7dku36kzm",
     "username": "hi",
     "icon": null,
-    "chats": []
+    "chats": [
+      {
+        "chatName": "me",
+        "lastRead": null,
+        "style": null,
+        "admin": true,
+        "deleted": false,
+        "chatId": "fe2868b0-4f38-4953-bc91-de3e15766e43",
+        "icon": null
+      }
+    ]
   }
 ]

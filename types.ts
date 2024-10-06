@@ -31,10 +31,12 @@ export type Chat = {
 
 export type UserChat = {
   chatId: string;
-  lastRead: string | null;
+  lastRead: Message | null;
   style: string | null;
   admin: boolean;
   deleted?: boolean;
+  chatName: string;
+  icon: string | null;
 };
 
 export type Response = {
