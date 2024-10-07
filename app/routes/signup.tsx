@@ -1,8 +1,8 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
-import { authenticator } from "~/services/auth.server";
+import { authenticator } from "server/services/auth.server";
 import { Layout } from "~/components/Layout";
-import { getSession } from "~/services/session.server";
+import { getSession } from "server/services/session.server";
 import { useState } from "react";
 import { FormCard } from "~/components/FormCard/FormCard";
 

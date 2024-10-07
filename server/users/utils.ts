@@ -16,7 +16,7 @@ export async function hashPassword(password: string) {
 }
 
 export async function comparePasswords(password: string, hash: string) {
-  console.log("bcrypt", password, hash);
+  // console.log("bcrypt", password, hash);
   return await bcrypt.compare(password, hash);
 }
 
@@ -92,7 +92,7 @@ export async function login(email: string, password: string) {
 
 //getAllUsers
 export async function getAllUsers() {
-  console.log("run get all users");
+  // console.log("run get all users");
   const db = await readDB();
   if (!db) {
     throw new Error("Unable to read database");
@@ -104,7 +104,7 @@ export async function getAllUsers() {
 export async function getUser(id: string) {
   const db = await readDB();
   const user = db.find((user: User) => user.id === id);
-  console.log("get user", id);
+  // console.log("get user", id);
   if (!user) {
     throw new Error("User not found");
   } else {

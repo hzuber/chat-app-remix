@@ -1,10 +1,11 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { Form, json, useActionData, useLoaderData } from "@remix-run/react";
-import { authenticator } from "~/services/auth.server";
+import { authenticator } from "server/services/auth.server";
 import { Layout } from "~/components/Layout";
 import { FormCard } from "~/components/FormCard/FormCard";
-import { commitSession, getSession } from "~/services/session.server";
+import { commitSession, getSession } from "server/services/session.server";
 import { useState } from "react";
+import { useUserContext } from "~/contexts/userContext";
 
 export default function Login() {
   const sessionError = useLoaderData<typeof loader>();

@@ -1,17 +1,23 @@
 import { LoaderFunctionArgs } from "@remix-run/node";
-import { authenticator } from "~/services/auth.server";
+import { authenticator } from "server/services/auth.server";
 import { Layout } from "~/components/Layout";
 import { Outlet, useLoaderData } from "@remix-run/react";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { SocketContext, useSocket } from "~/socket.context";
-import { getAllUsers, getUser } from "utils/users/utils";
+import { useUserContext } from "~/contexts/userContext";
+import { getAllUsers, getUser } from "server/users/utils";
 import { Chat, User, UserChat } from "../../types";
-import { addPrivateChat, getAllChats, getPrivateChat } from "utils/chats/utils";
+import { addPrivateChat, getAllChats, getChat } from "server/chats/utils";
 import ChatsList from "~/components/ChatsList/ChatsList";
+import { ChatProvider } from "~/contexts/chatContext";
+import ChatContainer from "~/components/ChatContainer/ChatContainer";
 
 export default function Chats() {
-  const { auth, allUsers, allChats, users } = useLoaderData<typeof loader>();
-  const currentUser = auth as User;
+  const { allUsers, allChats, users, activeChat } =
+    useLoaderData<typeof loader>();
+  const { user } = useUserContext();
+  console.log("user is", user);
+  // const currentUser = user as User;
   // const auth = useLoaderData<typeof loader>();
   //   const socket = useContext(SocketContext);
   //   useEffect(() => {
@@ -23,37 +29,40 @@ export default function Chats() {
 
   //     socket.emit("something", "ping");
   //   }, [socket]);
-  console.log("chat auth", auth, users, allUsers, allChats);
+  //console.log("chat auth", user, users, allUsers, allChats);
   return (
     <Layout>
-      <div className="flex w-full">
-        <div className="flex flex-col w-2/6">
-          <p>Add New</p>
-          <p>The chats</p>
-          <ChatsList user={currentUser} />
+      <ChatProvider initialChat={activeChat} initialChats={allChats}>
+        <div className="flex w-full">
+          <div className="flex flex-col w-2/6">
+            <p>Add New</p>
+            <p>The chats</p>
+            {user && <ChatsList user={user} />}
+          </div>
+          {/* <Outlet /> */}
+          <ChatContainer />
         </div>
-        <Outlet />
-      </div>
+      </ChatProvider>
     </Layout>
   );
 }
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   const auth = await authenticator.isAuthenticated(request, {
     failureRedirect: "/login",
   });
   const allUsers = await getAllUsers();
   const users: User[] = allUsers.filter((u: User) => u.id !== auth.id);
-  // console.log("users are", allUsers, users);
+  const activeChat = params.chatId && (await getChat(params.chatId));
   await createPrivateChats(users, auth);
   const allChats = await getAllChats();
-
-  return { auth, allUsers, allChats, users };
+  const user = await getUser(auth.id);
+  return { user, allUsers, allChats, users, activeChat };
 }
 
 async function createPrivateChats(users: User[], auth: User) {
   for (const user of users) {
-    console.log("Creating private chat with user: ", user.email);
+    //console.log("Creating private chat with user: ", user.email);
     await addPrivateChat([auth.id, user.id], null);
   }
 }

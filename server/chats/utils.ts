@@ -3,7 +3,7 @@ import { fileURLToPath } from "url";
 import path from "path";
 import { Chat, Response, User, UserChat } from "types";
 import { v4 as uuidv4 } from "uuid";
-import { getUser } from "utils/users/utils";
+import { getUser } from "server/users/utils";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -54,21 +54,25 @@ export async function getAllChats() {
   return db;
 }
 
+export async function getChat(id: string) {
+  const db = await readDB();
+  const chat = db.find((c: Chat) => c.id === id);
+  if (!chat) {
+    throw new Error("Chat not found");
+  } else {
+    return chat;
+  }
+}
+
 export async function getPrivateChat(members: string[]) {
   const db = await readDB();
-  const response: Response = { status: 200, data: { chat: null }, error: null };
   const chat = db.find(
     (chat: Chat) =>
       chat.type === "private_chat" &&
       chat.members.includes(members[0]) &&
       chat.members.includes(members[1])
   );
-  if (!chat) {
-    throw new Error("Chat not found");
-  } else {
-    response.data.chat = chat;
-  }
-  return response;
+  return chat;
 }
 
 export async function addGroupChat(
@@ -104,17 +108,18 @@ export async function addGroupChat(
 
 export async function addPrivateChat(members: string[], icon: string | null) {
   const db = await readDB();
-  console.log("run add private chat", members);
+  // console.log("run add private chat", members);
 
   const response: Response = { status: 200, data: { chat: null }, error: null };
 
-  // Check if a private chat between these two users already exists
-  const existingChat = db.find(
-    (chat: Chat) =>
-      chat.type === "private_chat" &&
-      chat.members.length === members.length && // Ensure both members are included
-      chat.members.every((member) => members.includes(member)) // Checks both members
-  );
+  // const existingChat = db.find(
+  //   (chat: Chat) =>
+  //     chat.type === "private_chat" &&
+  //     chat.members.length === members.length &&
+  //     chat.members.every((member) => members.includes(member))
+  // );
+
+  const existingChat = await getPrivateChat(members);
 
   if (existingChat) {
     response.error = "A private chat with these members already exists";
@@ -133,15 +138,14 @@ export async function addPrivateChat(members: string[], icon: string | null) {
       type: "private_chat",
     };
 
-    db.push(newChat); // Add new chat to database
-    console.log("push new chat", db);
+    db.push(newChat);
 
-    await writeDB(db); // Persist the updated database
+    await writeDB(db);
     await createUserChat(newChat);
     response.data.chat = newChat;
   }
 
-  console.log("add private chat response", response);
+  // console.log("add private chat response", response);
   return response;
 }
 
@@ -151,11 +155,9 @@ export async function createUserChat(chat: Chat) {
   let icon: string | null;
 
   const userDB = await readUserDB();
-  console.log("create user chat", chat);
 
   for (const userId of chat.members) {
     const chatUser: User = userDB.find((u: User) => userId === u.id);
-    console.log("a member in create user chat", chatUser);
 
     if (chat.type === "private_chat") {
       const otherId = chat.members.find((id) => userId !== id);
@@ -177,6 +179,7 @@ export async function createUserChat(chat: Chat) {
     const userChat: UserChat = {
       chatName: title,
       lastRead: null,
+      lastSent: null,
       style: null,
       admin,
       deleted: false,
@@ -195,7 +198,5 @@ export async function createUserChat(chat: Chat) {
     }
   }
 
-  // Write the updated userDB after modifying all users
   await writeUserDB(userDB);
-  console.log("Updated userDB with new chats");
 }

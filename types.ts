@@ -9,7 +9,7 @@ export type User = {
 
 export type Message = {
   id: string;
-  authorId: string;
+  author: User;
   date: Date;
   chatId: string;
   text: string;
@@ -32,6 +32,7 @@ export type Chat = {
 export type UserChat = {
   chatId: string;
   lastRead: Message | null;
+  lastSent: Message | null;
   style: string | null;
   admin: boolean;
   deleted?: boolean;

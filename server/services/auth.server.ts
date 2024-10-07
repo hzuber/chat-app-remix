@@ -1,8 +1,8 @@
 import { Authenticator, AuthorizationError } from "remix-auth";
 import { FormStrategy } from "remix-auth-form";
 import { Response, User } from "../../types";
-import { sessionStorage } from "~/services/session.server";
-import { login, signup } from "utils/users/utils";
+import { sessionStorage } from "server/services/session.server";
+import { login, signup } from "server/users/utils";
 
 export const authenticator = new Authenticator<User>(sessionStorage, {
   sessionErrorKey: "chat-app-error-key",

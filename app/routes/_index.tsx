@@ -1,5 +1,5 @@
 import type { MetaFunction } from "@remix-run/node";
-import { authenticator } from "~/services/auth.server";
+import { authenticator } from "server/services/auth.server";
 import { LoaderFunctionArgs } from "@remix-run/node";
 
 export const meta: MetaFunction = () => {
