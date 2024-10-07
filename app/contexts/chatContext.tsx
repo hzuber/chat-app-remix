@@ -1,68 +1,70 @@
-import {
-  createContext,
-  useContext,
-  useState,
-  ReactNode,
-  useEffect,
-} from "react";
-import { Chat, UserChat } from "types";
-import { getChatFromUserChat } from "~/utils/chats";
+// import {
+//   createContext,
+//   useContext,
+//   useState,
+//   ReactNode,
+//   useEffect,
+// } from "react";
+// import { Chat, UserChat } from "types";
 // import { getChatFromUserChat } from "~/utils/chats";
+// // import { getChatFromUserChat } from "~/utils/chats";
 
-// Define the context type to include both the active chat and a setter function
-interface ChatContextType {
-  activeChat: Chat | null;
-  setActiveUserChat: (userChat: UserChat | null) => void;
-  chats: Chat[] | null;
-  setChats: (chats: Chat[] | null) => void;
-}
+// // Define the context type to include both the active chat and a setter function
+// interface ChatContextType {
+//   activeChat: Chat | null;
+//   setActiveUserChat: (userChat: UserChat | null) => void;
+//   setActiveChat: (chat: Chat | null) => void;
 
-// Create the context
-const ChatContext = createContext<ChatContextType | undefined>(undefined);
+//   chats: Chat[] | null;
+//   setChats: (chats: Chat[] | null) => void;
+// }
 
-// Custom hook to use the active chat context
-export const useChatContext = () => {
-  const context = useContext(ChatContext);
-  if (context === undefined) {
-    throw new Error("useActiveChat must be used within an ActiveChatProvider");
-  }
-  return context;
-};
+// // Create the context
+// const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
-// Provider component that manages the state for active chat
-interface ChatProviderProps {
-  initialChats: Chat[] | null;
-  initialChat: Chat | null;
-  children: ReactNode;
-}
+// // Custom hook to use the active chat context
+// export const useChatContext = () => {
+//   const context = useContext(ChatContext);
+//   if (context === undefined) {
+//     throw new Error("useActiveChat must be used within an ActiveChatProvider");
+//   }
+//   return context;
+// };
 
-export const ChatProvider = ({
-  initialChats,
-  initialChat,
-  children,
-}: ChatProviderProps) => {
-  const [activeChat, setActiveChat] = useState<Chat | null>(initialChat);
-  const [chats, setChats] = useState<Chat[] | null>(initialChats);
+// // Provider component that manages the state for active chat
+// interface ChatProviderProps {
+//   initialChats: Chat[] | null;
+//   initialChat: Chat | null;
+//   children: ReactNode;
+// }
 
-  function setActiveUserChat(userChat: UserChat | null) {
-    console.log("set activechat in context");
-    if (userChat && chats) {
-      const chat = getChatFromUserChat(userChat, chats);
-      chat && setActiveChat(chat);
+// export const ChatProvider = ({
+//   initialChats,
+//   initialChat,
+//   children,
+// }: ChatProviderProps) => {
+//   const [activeChat, setActiveChat] = useState<Chat | null>(initialChat);
+//   const [chats, setChats] = useState<Chat[] | null>(initialChats);
 
-      console.log(chat, activeChat);
-    }
-  }
+//   function setActiveUserChat(userChat: UserChat | null) {
+//     console.log("set activechat in context");
+//     if (userChat && chats) {
+//       const chat = getChatFromUserChat(userChat, chats);
+//       chat && setActiveChat(chat);
 
-  useEffect(() => {
-    console.log("activeChat updated:", activeChat);
-  }, [activeChat]);
+//       console.log(chat, activeChat);
+//     }
+//   }
 
-  return (
-    <ChatContext.Provider
-      value={{ activeChat, setActiveUserChat, chats, setChats }}
-    >
-      {children}
-    </ChatContext.Provider>
-  );
-};
+//   useEffect(() => {
+//     console.log("activeChat updated:", activeChat);
+//   }, [activeChat]);
+
+//   return (
+//     <ChatContext.Provider
+//       value={{ activeChat, setActiveUserChat, setActiveChat, chats, setChats }}
+//     >
+//       {children}
+//     </ChatContext.Provider>
+//   );
+// };

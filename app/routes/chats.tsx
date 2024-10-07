@@ -6,11 +6,9 @@ import { useContext, useEffect, useState } from "react";
 import { SocketContext, useSocket } from "~/socket.context";
 import { useUserContext } from "~/contexts/userContext";
 import { getAllUsers, getUser } from "server/users/utils";
-import { Chat, User, UserChat } from "../../types";
+import { User } from "../../types";
 import { addPrivateChat, getAllChats, getChat } from "server/chats/utils";
 import ChatsList from "~/components/ChatsList/ChatsList";
-import { ChatProvider } from "~/contexts/chatContext";
-import ChatContainer from "~/components/ChatContainer/ChatContainer";
 
 export default function Chats() {
   const { allUsers, allChats, users, activeChat } =
@@ -32,17 +30,17 @@ export default function Chats() {
   //console.log("chat auth", user, users, allUsers, allChats);
   return (
     <Layout>
-      <ChatProvider initialChat={activeChat} initialChats={allChats}>
-        <div className="flex w-full">
-          <div className="flex flex-col w-2/6">
-            <p>Add New</p>
-            <p>The chats</p>
-            {user && <ChatsList user={user} />}
-          </div>
-          {/* <Outlet /> */}
-          <ChatContainer />
+      {/* <ChatProvider initialChat={activeChat} initialChats={allChats}> */}
+      <div className="flex w-full">
+        <div className="flex flex-col w-2/6">
+          <p>Add New</p>
+          <p>The chats</p>
+          {user && <ChatsList user={user} />}
         </div>
-      </ChatProvider>
+        <Outlet />
+        {/* <ChatContainer /> */}
+      </div>
+      {/* </ChatProvider> */}
     </Layout>
   );
 }
