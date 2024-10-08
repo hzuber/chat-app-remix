@@ -1,7 +1,7 @@
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { authenticator } from "server/services/auth.server";
 import { Layout } from "~/components/Layout";
-import { Outlet, useLoaderData } from "@remix-run/react";
+import { Outlet, useLoaderData, useOutletContext } from "@remix-run/react";
 import { useContext, useEffect, useState } from "react";
 import { SocketContext, useSocket } from "~/socket.context";
 import { useUserContext } from "~/contexts/userContext";
@@ -9,6 +9,7 @@ import { getAllUsers, getUser } from "server/users/utils";
 import { User } from "../../types";
 import { addPrivateChat, getAllChats, getChat } from "server/chats/utils";
 import ChatsList from "~/components/ChatsList/ChatsList";
+import IconSelection from "~/components/Modals/IconSelector";
 
 export default function Chats() {
   const { allUsers, allChats, users, activeChat } =
@@ -30,17 +31,23 @@ export default function Chats() {
   //console.log("chat auth", user, users, allUsers, allChats);
   return (
     <Layout>
-      {/* <ChatProvider initialChat={activeChat} initialChats={allChats}> */}
-      <div className="flex w-full">
-        <div className="flex flex-col w-2/6">
-          <p>Add New</p>
-          <p>The chats</p>
-          {user && <ChatsList user={user} />}
+      <div className="flex w-full align-stretch justify-between">
+        <div className="flex flex-col w-2/6  py-12 px-3 bg-amber-100">
+          <div className="flex justify-between">
+            <p>Chats</p>
+            <div className="flex justify-evenly">
+              <p className="p-2">Add New</p>
+              <p className="p-2">Filter</p>
+            </div>
+          </div>
+
+          {user && <ChatsList user={user} class={"w-4/6"} />}
         </div>
-        <Outlet />
-        {/* <ChatContainer /> */}
+        <div className="w-4/6 py-12 px-3">
+          <Outlet />
+          <IconSelection onSaveIcon={() => console.log("save")} />
+        </div>
       </div>
-      {/* </ChatProvider> */}
     </Layout>
   );
 }

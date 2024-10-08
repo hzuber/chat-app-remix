@@ -6,5 +6,9 @@ interface Props {
 }
 
 export const AuthorizedHeader = ({ user }: Props) => {
-  return <div>Hi {user.username ? user.username : user.email}!</div>;
+  return (
+    <div className="fixed top-0 w-full bg-white">
+      Hi {user.username ? user.username : user.email}!
+    </div>
+  );
 };

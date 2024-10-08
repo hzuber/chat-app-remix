@@ -7,24 +7,23 @@ interface Props {
 const ChatsListItem = ({ userChat }: Props) => {
   return (
     <div>
-      {!userChat.lastSent ? (
-        <>
-          <h6>{userChat.chatName}</h6>
-        </>
-      ) : (
-        <>
-          <h6>{userChat.chatName}</h6>
-          <p>
-            {userChat.lastSent && (
-              <span>
-                {userChat.lastSent.author.username
-                  ? userChat.lastSent.author.username
-                  : userChat.lastSent.author.email}
-              </span>
-            )}
-            {userChat.lastSent && <span>{userChat.lastSent.text}</span>}
-          </p>
-        </>
+      <div>
+        <div className="w-10 h-10">
+          {/* {userChat.icon ? userChat.icon : <BiBiBumSVG width={100} />} */}
+        </div>
+        <h6>{userChat.chatName}</h6>
+      </div>
+      {userChat.lastSent && (
+        <p>
+          {userChat.lastSent && (
+            <span>
+              {userChat.lastSent.author.username
+                ? userChat.lastSent.author.username
+                : userChat.lastSent.author.email}
+            </span>
+          )}
+          {userChat.lastSent && <span>{userChat.lastSent.text}</span>}
+        </p>
       )}
     </div>
   );

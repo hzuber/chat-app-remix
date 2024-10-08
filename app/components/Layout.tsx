@@ -9,10 +9,10 @@ import { User } from "types";
 export const Layout = ({ children }: { children: React.ReactNode }) => {
   const user: User = useOutletContext();
   return (
-    <div className="page">
+    <>
       {user ? <AuthorizedHeader user={user} /> : <UnauthorizedHeader />}
-      <div className="page-content py-4 px-8">{children}</div>
+      <div className="page-content">{children}</div>
       <Footer />
-    </div>
+    </>
   );
 };

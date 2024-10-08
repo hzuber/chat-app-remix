@@ -113,6 +113,22 @@ export async function getUser(id: string) {
 }
 
 //update function
+export async function updateUser(id: string, updatedData: Partial<User>) {
+  console.log("update user", id, updatedData);
+  const db = await readDB();
+  const index = db.findIndex((user: User) => user.id === id);
+
+  if (index === -1) {
+    console.log("User not found");
+    throw new Error("User not found");
+  }
+
+  console.log("UserIndex", index);
+  db[index] = { ...db[index], ...updatedData };
+  console.log("db", db[index]);
+  await writeDB(db);
+  return db[index];
+}
 
 //soft delete function
 

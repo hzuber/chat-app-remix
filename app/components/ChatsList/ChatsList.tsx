@@ -4,11 +4,13 @@ import { NavLink } from "@remix-run/react";
 
 interface Props {
   user: User;
+  class?: string;
 }
 
-const ChatsList = ({ user }: Props) => {
+const ChatsList = (props: Props) => {
+  const { user } = props;
   return (
-    <div className="flex flex-col">
+    <div className={`flex flex-col ${props.class}`}>
       {user.chats &&
         user.chats.map((chat) => (
           <NavLink
