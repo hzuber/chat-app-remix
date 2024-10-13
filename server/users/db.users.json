@@ -97,9 +97,12 @@
   {
     "id": "ba791977-daa1-45e3-b191-58ad57bc997f",
     "email": "me@me",
-    "password": "$2a$10$3rhic9y0.Sf0WP8nEsDi0O8mVukvhG3wcSaD23l2N9jsebuudOVOq",
-    "username": "me",
-    "icon": null,
+    "password": "$2a$10$9WmHHj5sl1XNY1iwSSeOhuT/k5wpA6aBS/QSYwuiOS1HmLaL6WjVG",
+    "username": "HannahMe",
+    "icon": {
+      "background": "bg-yellow-300 hover:bg-yellow-200",
+      "icon": "panda"
+    },
     "chats": [
       {
         "chatName": "formData.get(\"username\")?.toString()",

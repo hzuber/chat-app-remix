@@ -1,6 +1,6 @@
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { authenticator } from "server/services/auth.server";
-import { Layout } from "~/components/Layout";
+import { PageLayout } from "~/components/PageLayout";
 import { Outlet, useLoaderData, useOutletContext } from "@remix-run/react";
 import { useContext, useEffect, useState } from "react";
 import { SocketContext, useSocket } from "~/socket.context";
@@ -30,9 +30,9 @@ export default function Chats() {
   //   }, [socket]);
   //console.log("chat auth", user, users, allUsers, allChats);
   return (
-    <Layout>
+    <PageLayout>
       <div className="flex w-full align-stretch justify-between">
-        <div className="flex flex-col w-2/6  py-12 px-3 bg-amber-100">
+        <div className="flex flex-col w-2/6  pt-20 pb-14 px-3 bg-amber-100">
           <div className="flex justify-between">
             <p>Chats</p>
             <div className="flex justify-evenly">
@@ -45,10 +45,9 @@ export default function Chats() {
         </div>
         <div className="w-4/6 py-12 px-3">
           <Outlet />
-          <IconSelection onSaveIcon={() => console.log("save")} />
         </div>
       </div>
-    </Layout>
+    </PageLayout>
   );
 }
 

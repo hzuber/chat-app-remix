@@ -6,6 +6,7 @@ import { Chat, Message } from "types";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const DB_PATH = path.resolve(__dirname, "db.messages.json");
+const CHAT_DB_PATH = path.resolve(__dirname, "./chats/db.chats.json");
 
 async function readDB() {
   try {
@@ -22,6 +23,16 @@ async function writeDB(Chat: Chat) {
     await fs.writeFile(DB_PATH, JSON.stringify(Chat, null, 2), "utf-8");
   } catch (err) {
     console.error("Error writing to database:", err);
+  }
+}
+
+async function readChatDB() {
+  try {
+    const data = await fs.readFile(CHAT_DB_PATH, "utf-8");
+
+    return JSON.parse(data);
+  } catch (err) {
+    return [];
   }
 }
 
@@ -42,4 +53,13 @@ export async function getMessage(id: string) {
   } else {
     return message;
   }
+}
+
+export async function getChatMessages(id: string) {
+  // const chatDb = await readChatDB();
+  const messageDB = await getAllMessages();
+  // const theChat  = chatDb.find((c : Chat)=> c.id === id)
+  const messages = messageDB.filter((m: Message) => m.chatId === id);
+  console.log("chat messages", messages);
+  return messages;
 }

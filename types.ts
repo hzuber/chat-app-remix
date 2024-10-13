@@ -1,9 +1,14 @@
+export type Icon = {
+  icon: string | null;
+  background: string | null;
+};
+
 export type User = {
   id: string;
   username: string | null;
   email: string;
   password: string;
-  icon: string | null;
+  icon: Icon | null;
   chats: UserChat[] | null;
 };
 
@@ -20,7 +25,7 @@ export type Message = {
 export type Chat = {
   id: string;
   members: string[];
-  icon: string | null;
+  icon: Icon | null;
   description: string | null;
   chatName: string | null;
   type: "public" | "private_chat" | "private_group";
@@ -37,7 +42,7 @@ export type UserChat = {
   admin: boolean;
   deleted?: boolean;
   chatName: string;
-  icon: string | null;
+  icon: Icon | null;
 };
 
 export type Response = {

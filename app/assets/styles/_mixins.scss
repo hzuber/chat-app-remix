@@ -18,6 +18,12 @@
     }
 }
 
+@mixin linkButton{
+    background-color: transparent;
+    color:$theme-primary;
+    
+}
+
 @mixin card {
     border-radius: 10px;
     box-shadow: $shadow-gray 0 5px 20px;

@@ -29,6 +29,7 @@ export default {
         "theme-accent": {
           DEFAULT: "#FFDA78",
         },
+        // transparent: "transparent",
       },
     },
   },

@@ -3,9 +3,9 @@ const path = require("path");
 const { JSDOM } = require("jsdom");
 
 // Directory paths for SVGs and output TSX files
-const svgDirectory = "./app/assets/svgs"; // directory where your SVG files are located
-const tsxDirectory = "./app/assets/icons"; // directory to save generated TSX files
-const convertedSvgDirectory = "./app/assets/converted-svgs";
+const svgDirectory = "./app/assets/profile-icons/svgs"; // directory where your SVG files are located
+const tsxDirectory = "./app/assets/profile-icons/icons"; // directory to save generated TSX files
+const convertedSvgDirectory = "./app/assets/profile-icons/converted-svgs";
 const iconsIndexFile = path.join(tsxDirectory, "index.tsx");
 
 // Ensures output directory exists
@@ -51,9 +51,6 @@ const convertSVGtoTSX = (svgContent, componentName) => {
   const dom = new JSDOM(svgContent);
   const svgElement = dom.window.document.querySelector("svg");
 
-  const width = svgElement.getAttribute("width") || "100";
-  const height = svgElement.getAttribute("height") || "100";
-
   svgElement.removeAttribute("width");
   svgElement.removeAttribute("height");
 
@@ -74,8 +71,8 @@ const convertSVGtoTSX = (svgContent, componentName) => {
 
   return `
     interface SVGProps {
-      width?: number;
-      height?: number;
+      width?: string;
+      height?: string;
       fill?: string;
     }
 

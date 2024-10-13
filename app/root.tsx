@@ -10,6 +10,7 @@ import {
 import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
 
 import "./tailwind.css";
+import styles from "../app/assets/styles/Global.scss";
 import { authenticator } from "../server/services/auth.server";
 import { socketContext } from "./socket.context";
 import { UserProvider } from "./contexts/userContext";
@@ -21,6 +22,7 @@ import { getUser } from "server/users/utils";
 import { User } from "types";
 
 export const links: LinksFunction = () => [
+  // { rel: "stylesheet", href: styles },
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
     rel: "preconnect",
@@ -30,6 +32,10 @@ export const links: LinksFunction = () => [
   {
     rel: "stylesheet",
     href: "https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
+  },
+  {
+    rel: "stylesheet",
+    href: "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=close,edit",
   },
 ];
 

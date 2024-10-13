@@ -3,8 +3,7 @@ import { fileURLToPath } from "url";
 import bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from "uuid";
 import path from "path";
-import { Response, User } from "types";
-import { AuthorizationError } from "remix-auth";
+import { Icon, Response, User } from "types";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -49,7 +48,7 @@ export async function signup(
   email: string,
   password: string,
   username?: string,
-  icon?: string
+  icon?: Icon
 ) {
   const db = await readDB();
   let user: User;
@@ -66,7 +65,7 @@ export async function signup(
       email,
       password: hashedPassword,
       username: username ? username : null,
-      icon: icon ? icon : null,
+      icon: icon ? { icon: icon.icon, background: icon.background } : null,
       chats: [],
     };
     db.push(user);
@@ -124,8 +123,11 @@ export async function updateUser(id: string, updatedData: Partial<User>) {
   }
 
   console.log("UserIndex", index);
+  if (updatedData.password) {
+    const hashedPassword = await hashPassword(updatedData.password);
+    updatedData.password = hashedPassword;
+  }
   db[index] = { ...db[index], ...updatedData };
-  console.log("db", db[index]);
   await writeDB(db);
   return db[index];
 }

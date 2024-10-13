@@ -1,5 +1,6 @@
 
 body{
+  transition:all 0.3s ease-in-out;
   position:relative;
     font-family: 'Montserrat',
         "Inter",
@@ -52,4 +53,21 @@ body{
             display:flex;
             
           }
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 24
+}
+
+.full-overlay{
+  height:100%;
+  width:100%;
+  position:fixed;
+  background-color: #0000008a;
+  top:0;
+  left:0;
+  z-index:15;
+}
 }

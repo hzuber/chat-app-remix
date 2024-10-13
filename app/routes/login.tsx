@@ -1,7 +1,7 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { Form, json, useActionData, useLoaderData } from "@remix-run/react";
 import { authenticator } from "server/services/auth.server";
-import { Layout } from "~/components/Layout";
+import { PageLayout } from "~/components/PageLayout";
 import { FormCard } from "~/components/FormCard/FormCard";
 import { commitSession, getSession } from "server/services/session.server";
 import { useState } from "react";
@@ -10,7 +10,7 @@ import { useUserContext } from "~/contexts/userContext";
 export default function Login() {
   const sessionError = useLoaderData<typeof loader>();
   return (
-    <Layout>
+    <PageLayout>
       <FormCard classes="max-w-lg">
         <h5>Login</h5>
         <p>
@@ -46,7 +46,7 @@ export default function Login() {
           <button className="mt-5 mx-auto">Login</button>
         </Form>
       </FormCard>
-    </Layout>
+    </PageLayout>
   );
 }
 
