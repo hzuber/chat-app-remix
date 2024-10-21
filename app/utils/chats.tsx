@@ -12,9 +12,9 @@ import { Chat, User, UserChat } from "types";
 //   }
 // }
 
-export function getChatFromUserChat(userChat: UserChat, chats: Chat[]) {
-  const chat = chats.find((c) => c.id === userChat.chatId);
-  if (chat) {
-    return chat;
-  }
-}
+// export function getChatFromUserChat(userChat: UserChat, chats: Chat[]) {
+//   const chat = chats.find((c) => c.id === userChat.chatId);
+//   if (chat) {
+//     return chat;
+//   }
+// }

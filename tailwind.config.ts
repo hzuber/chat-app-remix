@@ -16,6 +16,9 @@ export default {
           '"Noto Color Emoji"',
         ],
       },
+      borderWidth: {
+        "1": "1px",
+      },
       colors: {
         "theme-primary": {
           DEFAULT: "#003285",

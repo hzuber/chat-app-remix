@@ -36,9 +36,9 @@ export const UserIcon = ({
   }, [icon, background]);
   return (
     <div
-      className={` flex justify-center items-center rounded-full ${background} ${
-        padding ? padding : "p-3"
-      }`}
+      className={` flex justify-center items-center rounded-full ${
+        background ? background : "bg-slate-300"
+      } ${padding ? padding : "p-3"}`}
     >
       {userIcon ? (
         React.cloneElement(userIcon, {

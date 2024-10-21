@@ -5,18 +5,14 @@
 //   ReactNode,
 //   useEffect,
 // } from "react";
-// import { Chat, UserChat } from "types";
-// import { getChatFromUserChat } from "~/utils/chats";
-// // import { getChatFromUserChat } from "~/utils/chats";
+// import { ChatObject, UserChat } from "types";
 
 // // Define the context type to include both the active chat and a setter function
 // interface ChatContextType {
-//   activeChat: Chat | null;
-//   setActiveUserChat: (userChat: UserChat | null) => void;
-//   setActiveChat: (chat: Chat | null) => void;
-
-//   chats: Chat[] | null;
-//   setChats: (chats: Chat[] | null) => void;
+//   // activeChat: ChatObject | null;
+//   // setActiveChat: (chat: ChatObject | null) => void;
+//   // chats: ChatObject[] | null;
+//   // setChats: (chats: ChatObject[] | null) => void;
 // }
 
 // // Create the context
@@ -33,8 +29,8 @@
 
 // // Provider component that manages the state for active chat
 // interface ChatProviderProps {
-//   initialChats: Chat[] | null;
-//   initialChat: Chat | null;
+//   initialChats: ChatObject[] | null;
+//   initialChat: ChatObject | null;
 //   children: ReactNode;
 // }
 
@@ -43,18 +39,8 @@
 //   initialChat,
 //   children,
 // }: ChatProviderProps) => {
-//   const [activeChat, setActiveChat] = useState<Chat | null>(initialChat);
-//   const [chats, setChats] = useState<Chat[] | null>(initialChats);
-
-//   function setActiveUserChat(userChat: UserChat | null) {
-//     console.log("set activechat in context");
-//     if (userChat && chats) {
-//       const chat = getChatFromUserChat(userChat, chats);
-//       chat && setActiveChat(chat);
-
-//       console.log(chat, activeChat);
-//     }
-//   }
+//   const [activeChat, setActiveChat] = useState<ChatObject | null>(initialChat);
+//   const [chats, setChats] = useState<ChatObject[] | null>(initialChats);
 
 //   useEffect(() => {
 //     console.log("activeChat updated:", activeChat);
@@ -62,7 +48,7 @@
 
 //   return (
 //     <ChatContext.Provider
-//       value={{ activeChat, setActiveUserChat, setActiveChat, chats, setChats }}
+//       value={{ activeChat, setActiveChat, chats, setChats }}
 //     >
 //       {children}
 //     </ChatContext.Provider>

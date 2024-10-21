@@ -14,7 +14,7 @@ export type User = {
 
 export type Message = {
   id: string;
-  author: User;
+  author: string;
   date: Date;
   chatId: string;
   text: string;
@@ -29,7 +29,7 @@ export type Chat = {
   description: string | null;
   chatName: string | null;
   type: "public" | "private_chat" | "private_group";
-  lastSent: string | null;
+  lastSent: Message | null;
   messages: string[] | null;
   admins: string[];
 };
@@ -37,12 +37,19 @@ export type Chat = {
 export type UserChat = {
   chatId: string;
   lastRead: Message | null;
-  lastSent: Message | null;
+  // lastSent: Message | null;
   style: string | null;
   admin: boolean;
   deleted?: boolean;
-  chatName: string;
+  // chatName: string;
+  // icon: Icon | null;
+};
+
+export type ChatObject = {
   icon: Icon | null;
+  name: string | null;
+  chat: Chat;
+  userChat: UserChat | null;
 };
 
 export type Response = {

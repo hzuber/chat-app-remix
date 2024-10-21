@@ -1,21 +1,20 @@
 import { useEffect, useState } from "react";
-import IconSelection from "../components/Modals/IconSelector";
 import { ActionFunctionArgs, json, LoaderFunctionArgs } from "@remix-run/node";
 import { authenticator } from "server/services/auth.server";
 import { getUser, updateUser } from "server/users/utils";
 import {
   Form,
-  Navigate,
   NavLink,
   Outlet,
   useActionData,
   useLoaderData,
 } from "@remix-run/react";
 import { PageLayout } from "~/components/PageLayout";
-import { ModalLayout } from "~/components/Modals/ModalLayout/ModalLayout";
+// import { ModalLayout } from "~/components/Modals/ModalLayout/ModalLayout";
 import { UserIcon } from "~/components/UserIcon";
 import { FormCard } from "~/components/FormCard/FormCard";
 import { User } from "types";
+import { useUserContext } from "~/contexts/userContext";
 
 interface Errors {
   verify?: string | null;
@@ -26,17 +25,13 @@ interface Errors {
 }
 
 const UserProfile = () => {
-  const [selectedIcon, setSelectedIcon] = useState<string | null>(null);
-  const [currentIcon, setCurrentIcon] = useState<string | null>(null);
-  const [selectedBackground, setSelectedBackground] = useState<string | null>(
-    null
-  );
-  const [currentBackground, setCurrentBackground] = useState<string | null>(
-    null
-  );
-  const [showIconModal, setShowIconModal] = useState(false);
+  // const [currentIcon, setCurrentIcon] = useState<string | null>(null);
+  // const [currentBackground, setCurrentBackground] = useState<string | null>(
+  //   null
+  // );
   const [userInfo, setUserInfo] = useState<User | null>(null);
-  const { user } = useLoaderData<typeof loader>();
+  // const { user } = useLoaderData<typeof loader>();
+  const { user } = useUserContext();
   const actionData = useActionData<typeof action>();
   const [errors, setErrors] = useState<Errors>({});
   // const error = actionData?.error ?? null;
@@ -82,7 +77,7 @@ const UserProfile = () => {
     if (actionData?.error) {
       setErrors({ ...errors, general: actionData?.error });
     }
-  }, [actionData]);
+  }, [actionData, errors]);
 
   useEffect(() => {
     console.log("user data", user);
@@ -91,110 +86,102 @@ const UserProfile = () => {
     }
   }, [user]);
 
-  useEffect(() => {
-    console.log("user data", userInfo);
-    if (userInfo && userInfo.icon) {
-      setCurrentIcon(userInfo.icon.icon);
-      setCurrentBackground(userInfo.icon.background);
-    }
-  }, [userInfo]);
-
   // useEffect(() => {
-  //   console.log("use effect 1", selectedIcon, errors.icon);
-  //   selectedIcon && !errors.icon && setCurrentIcon(selectedIcon);
-  // }, [selectedIcon, errors]);
-
-  // useEffect(() => {
-  //   console.log("use effect 2", selectedBackground, errors.background);
-  //   selectedBackground &&
-  //     !errors.background &&
-  //     setCurrentBackground(selectedBackground);
-  // }, [selectedBackground, errors]);
-
-  useEffect(() => {
-    console.log("use effect success", actionData);
-    actionData?.success && setShowIconModal(false);
-  }, [actionData]);
-
-  const handleIconSelect = (selectedIcon: string) => {
-    setSelectedIcon(selectedIcon);
-  };
-  const handleBackgroundSelect = (selectedBackground: string) => {
-    setSelectedBackground(selectedBackground);
-  };
+  //   console.log("user data", userInfo);
+  //   if (userInfo && userInfo.icon) {
+  //     setCurrentIcon(userInfo.icon.icon);
+  //     setCurrentBackground(userInfo.icon.background);
+  //   }
+  // }, [userInfo]);
 
   return (
     <PageLayout>
       <div className="w-full flex flex-col items-center">
-        <h1>{"User"} Profile</h1>
-        <NavLink to={`/user/icon`}>
-          <button className="flex hover:opacity-80 p-2">
-            <UserIcon
-              icon={currentIcon}
-              background={currentBackground}
-              width="50"
-              height="50"
-            />
-            <span className="material-symbols-outlined">edit</span>
-          </button>
-        </NavLink>
-        <Outlet />
-        <FormCard classes={"w-full max-w-4xl"}>
-          <Form method="post" replace>
-            <div className="form-field">
-              <label htmlFor="username">Username</label>
-              <input
-                type="text"
-                name="username"
-                placeholder={
-                  user.username
-                    ? user.username
-                    : "You don't have a username yet"
-                }
-              />
-            </div>
-            <div className="form-field">
-              <label htmlFor="email">Email Address</label>
-              <p id="email">{user.email}</p>
-            </div>
-            <div className="form-field">
-              <label htmlFor="password">Change Password </label>
-              <span className="text-red-600 text-sm">{errors?.password}</span>
-              <input
-                type="password"
-                name="password"
-                autoComplete="current-password"
-                placeholder="Enter your password"
-                onChange={(e) => checkPwd(e.target.value)}
-              />
-            </div>
-            <div className="form-field">
-              <label htmlFor="verify">Verify Password </label>
-              <span className="text-red-600 text-sm ">{errors?.verify}</span>
-              <input
-                type="password"
-                name="verify"
-                placeholder="Retype password"
-                onChange={(e) => checkPasswordVerification(e.target.value)}
-              />
-            </div>
-            <button disabled={disableSubmitButton()} className="mt-2 mx-auto">
-              Save changes
-            </button>
-            {errors.general && (
-              <p
-                className="text-red-600 min-h-4 text-sm leading-4 mt-3"
-                dangerouslySetInnerHTML={{ __html: errors.general }}
-              />
-            )}
-            <button
-              className="mt-2 mx-auto cancel"
-              onClick={() => cancelChanges()}
-            >
-              Cancel
-            </button>
-          </Form>
-        </FormCard>
+        {!user && (
+          <>
+            You are not signed in. <a href="/login">Login</a>
+          </>
+        )}
+        {user && (
+          <>
+            <h1>Edit Profile</h1>
+            <NavLink to={`/user/icon`}>
+              <button className="flex hover:opacity-80 p-2">
+                <UserIcon
+                  icon={userInfo?.icon ? userInfo.icon.icon : null}
+                  background={userInfo?.icon ? userInfo.icon.background : null}
+                  width="50"
+                  height="50"
+                />
+                <span className="material-symbols-outlined">edit</span>
+              </button>
+            </NavLink>
+            <Outlet />
+            <FormCard classes={"w-full max-w-4xl"}>
+              <Form method="post" replace>
+                <div className="form-field">
+                  <label htmlFor="username">Username</label>
+                  <input
+                    type="text"
+                    name="username"
+                    placeholder={
+                      user.username
+                        ? user.username
+                        : "You don't have a username yet"
+                    }
+                  />
+                </div>
+                <div className="form-field">
+                  <label htmlFor="email">Email Address</label>
+                  <p id="email">{user.email}</p>
+                </div>
+                <div className="form-field">
+                  <label htmlFor="password">Change Password </label>
+                  <span className="text-red-600 text-sm">
+                    {errors?.password}
+                  </span>
+                  <input
+                    type="password"
+                    name="password"
+                    autoComplete="current-password"
+                    placeholder="Enter your password"
+                    onChange={(e) => checkPwd(e.target.value)}
+                  />
+                </div>
+                <div className="form-field">
+                  <label htmlFor="verify">Verify Password </label>
+                  <span className="text-red-600 text-sm ">
+                    {errors?.verify}
+                  </span>
+                  <input
+                    type="password"
+                    name="verify"
+                    placeholder="Retype password"
+                    onChange={(e) => checkPasswordVerification(e.target.value)}
+                  />
+                </div>
+                <button
+                  disabled={disableSubmitButton()}
+                  className="mt-2 mx-auto"
+                >
+                  Save changes
+                </button>
+                {errors.general && (
+                  <p
+                    className="text-red-600 min-h-4 text-sm leading-4 mt-3"
+                    dangerouslySetInnerHTML={{ __html: errors.general }}
+                  />
+                )}
+                <button
+                  className="mt-2 mx-auto cancel"
+                  onClick={() => cancelChanges()}
+                >
+                  Cancel
+                </button>
+              </Form>
+            </FormCard>
+          </>
+        )}
       </div>
     </PageLayout>
   );
@@ -216,7 +203,7 @@ export async function action({ request }: ActionFunctionArgs) {
     return json(
       { error: "Invalid request method", success: false, updatedUser: null },
       { status: 405 }
-    ); // 405 Method Not Allowed
+    );
   }
   try {
     const contentLength = request.headers.get("content-length");
@@ -225,12 +212,11 @@ export async function action({ request }: ActionFunctionArgs) {
       return json(
         { error: "Request body is empty", updatedUser: null, success: false },
         { status: 400 }
-      ); // 400 Bad Request
+      );
     }
 
     console.log("body", body);
   } catch (error) {
-    // If parsing fails (e.g., empty or invalid JSON), return an error response or handle it
     return json(
       {
         error: "Invalid or empty JSON body",
@@ -255,8 +241,7 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  // Save the selected icon to the database (assuming you have a Prisma or similar setup)
-  const userId = auth.id; // Assuming you have a function to get the user ID
+  const userId = auth.id;
   if (userId) {
     const userData: Partial<User> = {};
     try {

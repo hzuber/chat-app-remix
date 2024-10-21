@@ -13,7 +13,7 @@ import { isbot } from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
 import express from "express";
 import { createServer } from "http";
-import createSocketServer from "socket.server";
+import { createSocketServer } from "socket.server";
 import { configDotenv } from "dotenv";
 
 const ABORT_DELAY = 5_000;

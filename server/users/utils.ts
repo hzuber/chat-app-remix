@@ -3,7 +3,7 @@ import { fileURLToPath } from "url";
 import bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from "uuid";
 import path from "path";
-import { Icon, Response, User } from "types";
+import { Icon, Response, User, UserChat } from "types";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -130,6 +130,29 @@ export async function updateUser(id: string, updatedData: Partial<User>) {
   db[index] = { ...db[index], ...updatedData };
   await writeDB(db);
   return db[index];
+}
+
+export async function updateUserChat(
+  userId: string,
+  chatId: string,
+  updatedData: Partial<UserChat>
+) {
+  const db = await readDB();
+  const user: User = db.find((u: User) => u.id === userId);
+
+  if (!user) {
+    console.log("User not found");
+    throw new Error("User not found");
+  }
+  const index = user.chats?.findIndex((c) => c.chatId === chatId);
+
+  if (index === -1 || !user.chats || !index) {
+    console.log("UserChat not found");
+    throw new Error("UserChat not found");
+  }
+  user.chats[index] = { ...user.chats[index], ...updatedData };
+  await writeDB(db);
+  return user.chats[index];
 }
 
 //soft delete function

@@ -1,24 +1,5 @@
 [
   {
-    "id": "6ca6eabf-d89d-4552-bdd4-4e2e46c6b950",
-    "email": "formData.get(\"email\")?.toString()",
-    "password": "$2a$10$X0pog5qghCG93EEU9VLJMe8xtby.6L1m/wtuLMxNtkVeUCWYj0Vua",
-    "username": "formData.get(\"username\")?.toString()",
-    "icon": "formData.get(\"icon\")?.toString()",
-    "chats": [
-      {
-        "chatName": "me",
-        "lastRead": null,
-        "lastSent": null,
-        "style": null,
-        "admin": true,
-        "deleted": false,
-        "chatId": "c1dd2db1-ba76-4227-bac4-ca53fc869b7a",
-        "icon": null
-      }
-    ]
-  },
-  {
     "id": "7b3f0b86-e5b3-46a1-9161-17572554feb5",
     "email": "me@me.com",
     "password": "$2a$10$xkuzAceBK/BfTFC5FJgq2.ciYYZE3oDyLtO3Sp6vjo8iMpGUGuKeS",
@@ -26,14 +7,18 @@
     "icon": null,
     "chats": [
       {
-        "chatName": "me",
         "lastRead": null,
-        "lastSent": null,
         "style": null,
         "admin": true,
         "deleted": false,
-        "chatId": "be4f5937-1d4f-405a-a279-6b36bac29470",
-        "icon": null
+        "chatId": "c2782d66-42d6-4aee-9f3d-defe2e32c369"
+      },
+      {
+        "lastRead": null,
+        "style": null,
+        "admin": true,
+        "deleted": false,
+        "chatId": "32ee2af4-0f8a-497a-9f63-4f48c82b4abf"
       }
     ]
   },
@@ -45,14 +30,18 @@
     "icon": null,
     "chats": [
       {
-        "chatName": "me",
         "lastRead": null,
-        "lastSent": null,
         "style": null,
         "admin": true,
         "deleted": false,
-        "chatId": "dab72d0d-c738-439f-8fef-a7b6af5cb0c4",
-        "icon": null
+        "chatId": "a28883cb-41a2-4a23-844c-5502a87bb921"
+      },
+      {
+        "lastRead": null,
+        "style": null,
+        "admin": true,
+        "deleted": false,
+        "chatId": "c0941755-f8c2-4c92-a9ac-15cdfdcfdf4f"
       }
     ]
   },
@@ -64,14 +53,18 @@
     "icon": null,
     "chats": [
       {
-        "chatName": "me",
         "lastRead": null,
-        "lastSent": null,
         "style": null,
         "admin": true,
         "deleted": false,
-        "chatId": "7755f9b1-8032-4b3b-ba48-c1b1f77c4c18",
-        "icon": null
+        "chatId": "afabd60d-c564-4528-b5a0-622b06907a91"
+      },
+      {
+        "lastRead": null,
+        "style": null,
+        "admin": true,
+        "deleted": false,
+        "chatId": "dccec046-9982-48e0-ad63-106893bcf52f"
       }
     ]
   },
@@ -83,14 +76,18 @@
     "icon": null,
     "chats": [
       {
-        "chatName": "me",
         "lastRead": null,
-        "lastSent": null,
         "style": null,
         "admin": true,
         "deleted": false,
-        "chatId": "956c7452-fbcd-4269-a652-fa6f52490ea1",
-        "icon": null
+        "chatId": "7b6942ac-5e6a-45db-b713-e0e501e4b163"
+      },
+      {
+        "lastRead": null,
+        "style": null,
+        "admin": true,
+        "deleted": false,
+        "chatId": "00c862bd-f006-439d-b232-6cc6931c741e"
       }
     ]
   },
@@ -105,64 +102,53 @@
     },
     "chats": [
       {
-        "chatName": "formData.get(\"username\")?.toString()",
         "lastRead": null,
-        "lastSent": null,
         "style": null,
         "admin": true,
         "deleted": false,
-        "chatId": "c1dd2db1-ba76-4227-bac4-ca53fc869b7a",
-        "icon": "formData.get(\"icon\")?.toString()"
+        "chatId": "c2782d66-42d6-4aee-9f3d-defe2e32c369"
       },
       {
-        "chatName": "mem",
         "lastRead": null,
-        "lastSent": null,
         "style": null,
         "admin": true,
         "deleted": false,
-        "chatId": "be4f5937-1d4f-405a-a279-6b36bac29470",
-        "icon": null
+        "chatId": "a28883cb-41a2-4a23-844c-5502a87bb921"
       },
       {
-        "chatName": "he",
         "lastRead": null,
-        "lastSent": null,
         "style": null,
         "admin": true,
         "deleted": false,
-        "chatId": "dab72d0d-c738-439f-8fef-a7b6af5cb0c4",
-        "icon": null
+        "chatId": "afabd60d-c564-4528-b5a0-622b06907a91"
       },
       {
-        "chatName": "yhyh",
         "lastRead": null,
-        "lastSent": null,
         "style": null,
         "admin": true,
         "deleted": false,
-        "chatId": "7755f9b1-8032-4b3b-ba48-c1b1f77c4c18",
-        "icon": null
+        "chatId": "7b6942ac-5e6a-45db-b713-e0e501e4b163"
       },
       {
-        "chatName": "hello",
         "lastRead": null,
-        "lastSent": null,
         "style": null,
         "admin": true,
         "deleted": false,
-        "chatId": "956c7452-fbcd-4269-a652-fa6f52490ea1",
-        "icon": null
+        "chatId": "42b36db9-9495-43ca-8b10-42eee2fd6e52"
       },
       {
-        "chatName": "hi",
         "lastRead": null,
-        "lastSent": null,
         "style": null,
         "admin": true,
         "deleted": false,
-        "chatId": "6872726f-7672-4710-b191-f22f217bc924",
-        "icon": null
+        "chatId": "9a63d22a-f2c1-4bc4-8f61-1f85fed86faa"
+      },
+      {
+        "lastRead": null,
+        "style": null,
+        "admin": true,
+        "deleted": false,
+        "chatId": "512b7ef6-b04f-41f4-a7cf-c67ee98887b0"
       }
     ]
   },
@@ -174,14 +160,102 @@
     "icon": null,
     "chats": [
       {
-        "chatName": "me",
         "lastRead": null,
-        "lastSent": null,
         "style": null,
         "admin": true,
         "deleted": false,
-        "chatId": "6872726f-7672-4710-b191-f22f217bc924",
-        "icon": null
+        "chatId": "42b36db9-9495-43ca-8b10-42eee2fd6e52"
+      },
+      {
+        "lastRead": null,
+        "style": null,
+        "admin": true,
+        "deleted": false,
+        "chatId": "7f197beb-9c48-4cb1-a87f-f9c90038bea6"
+      }
+    ]
+  },
+  {
+    "id": "1fa03f88-11f1-47c0-807f-e1ec95ac3c50",
+    "email": "alice@prisma.io",
+    "password": "$2a$10$o5fuZ0RmG5P4IKq.1fPDY.KDw6FyT3wnpPnbP2zNyOt8IqW1Zstfe",
+    "username": "Alice",
+    "icon": {
+      "background": "bg-rose-600 hover:bg-rose-500",
+      "icon": "crab"
+    },
+    "chats": [
+      {
+        "lastRead": null,
+        "style": null,
+        "admin": true,
+        "deleted": false,
+        "chatId": "9a63d22a-f2c1-4bc4-8f61-1f85fed86faa"
+      },
+      {
+        "lastRead": null,
+        "style": null,
+        "admin": true,
+        "deleted": false,
+        "chatId": "a920a08f-16b6-4215-9079-c072df058a68"
+      }
+    ]
+  },
+  {
+    "id": "e382d65f-87c4-4556-9ebf-ab27b8bdafad",
+    "email": "new@new.com",
+    "password": "$2a$10$iXujdIldojzGGDBhpyyuV.SgIxFT5ZbOmuJWVni0GHIvvvRpIBrjG",
+    "username": "New",
+    "icon": null,
+    "chats": [
+      {
+        "lastRead": null,
+        "style": null,
+        "admin": true,
+        "deleted": false,
+        "chatId": "32ee2af4-0f8a-497a-9f63-4f48c82b4abf"
+      },
+      {
+        "lastRead": null,
+        "style": null,
+        "admin": true,
+        "deleted": false,
+        "chatId": "c0941755-f8c2-4c92-a9ac-15cdfdcfdf4f"
+      },
+      {
+        "lastRead": null,
+        "style": null,
+        "admin": true,
+        "deleted": false,
+        "chatId": "dccec046-9982-48e0-ad63-106893bcf52f"
+      },
+      {
+        "lastRead": null,
+        "style": null,
+        "admin": true,
+        "deleted": false,
+        "chatId": "00c862bd-f006-439d-b232-6cc6931c741e"
+      },
+      {
+        "lastRead": null,
+        "style": null,
+        "admin": true,
+        "deleted": false,
+        "chatId": "512b7ef6-b04f-41f4-a7cf-c67ee98887b0"
+      },
+      {
+        "lastRead": null,
+        "style": null,
+        "admin": true,
+        "deleted": false,
+        "chatId": "7f197beb-9c48-4cb1-a87f-f9c90038bea6"
+      },
+      {
+        "lastRead": null,
+        "style": null,
+        "admin": true,
+        "deleted": false,
+        "chatId": "a920a08f-16b6-4215-9079-c072df058a68"
       }
     ]
   }

@@ -1,7 +1,7 @@
 import { promises as fs } from "fs";
 import { fileURLToPath } from "url";
 import path from "path";
-import { Chat, Response, User, UserChat } from "types";
+import { Chat, ChatObject, Icon, Response, User, UserChat } from "types";
 import { v4 as uuidv4 } from "uuid";
 import { getUser } from "server/users/utils";
 
@@ -24,7 +24,7 @@ async function writeDB(Chat: Chat) {
   try {
     await fs.writeFile(DB_PATH, JSON.stringify(Chat, null, 2), "utf-8");
   } catch (err) {
-    //console.error("Error writing to database:", err);
+    console.error("Error writing to database:", err);
   }
 }
 
@@ -52,6 +52,12 @@ export async function getAllChats() {
     throw new Error("Unable to read database");
   }
   return db;
+}
+
+export async function getAllUsersChats(id: string) {
+  const db = await readDB();
+  const usersChats: Chat[] = db.filter((c: Chat) => c.members.includes(id));
+  return usersChats;
 }
 
 export async function getChat(id: string) {
@@ -106,19 +112,9 @@ export async function addGroupChat(
   return response;
 }
 
-export async function addPrivateChat(members: string[], icon: string | null) {
+export async function addPrivateChat(members: string[], icon: Icon | null) {
   const db = await readDB();
-  // console.log("run add private chat", members);
-
   const response: Response = { status: 200, data: { chat: null }, error: null };
-
-  // const existingChat = db.find(
-  //   (chat: Chat) =>
-  //     chat.type === "private_chat" &&
-  //     chat.members.length === members.length &&
-  //     chat.members.every((member) => members.includes(member))
-  // );
-
   const existingChat = await getPrivateChat(members);
 
   if (existingChat) {
@@ -139,20 +135,15 @@ export async function addPrivateChat(members: string[], icon: string | null) {
     };
 
     db.push(newChat);
-
     await writeDB(db);
     await createUserChat(newChat);
     response.data.chat = newChat;
   }
-
-  // console.log("add private chat response", response);
   return response;
 }
 
 export async function createUserChat(chat: Chat) {
-  let title: string;
   let admin: boolean;
-  let icon: string | null;
 
   const userDB = await readUserDB();
 
@@ -160,31 +151,17 @@ export async function createUserChat(chat: Chat) {
     const chatUser: User = userDB.find((u: User) => userId === u.id);
 
     if (chat.type === "private_chat") {
-      const otherId = chat.members.find((id) => userId !== id);
-      const otherUser: User = otherId && (await getUser(otherId));
-      if (otherUser) {
-        title = otherUser.username ? otherUser.username : otherUser.email;
-        icon = otherUser.icon;
-      } else {
-        title = chat.chatName ? chat.chatName : "Unnamed Chat";
-        icon = chat.icon;
-      }
       admin = true;
     } else {
-      title = chat.chatName ? chat.chatName : "Unnamed Chat";
       admin = chat.admins.includes(userId);
-      icon = chat.icon;
     }
 
     const userChat: UserChat = {
-      chatName: title,
       lastRead: null,
-      lastSent: null,
       style: null,
       admin,
       deleted: false,
       chatId: chat.id,
-      icon,
     };
 
     if (chatUser) {
@@ -199,4 +176,28 @@ export async function createUserChat(chat: Chat) {
   }
 
   await writeUserDB(userDB);
+}
+
+export async function createChatObject(chatId: string, userId: string) {
+  let icon: Icon | null;
+  let name: string | null;
+  const chat: Chat = await getChat(chatId);
+  const user: User = await getUser(userId);
+  const userChat = user.chats?.find((c) => c.chatId === chatId);
+  if (chat.type === "private_chat") {
+    const otherMemberId = chat.members.find((m) => m !== userId);
+    const otherUser: User = otherMemberId && (await getUser(otherMemberId));
+    icon = otherUser.icon;
+    name = otherUser.username ? otherUser.username : otherUser.email;
+  } else {
+    icon = chat.icon;
+    name = chat.chatName;
+  }
+  const chatObject: ChatObject = {
+    chat,
+    icon,
+    name,
+    userChat: userChat ? userChat : null,
+  };
+  return chatObject;
 }

@@ -6,48 +6,50 @@ import { useContext, useEffect, useState } from "react";
 import { SocketContext, useSocket } from "~/socket.context";
 import { useUserContext } from "~/contexts/userContext";
 import { getAllUsers, getUser } from "server/users/utils";
-import { User } from "../../types";
-import { addPrivateChat, getAllChats, getChat } from "server/chats/utils";
+import { Chat, ChatObject, User } from "../../types";
+import {
+  addPrivateChat,
+  createChatObject,
+  getAllChats,
+  getAllUsersChats,
+  getChat,
+} from "server/chats/utils";
 import ChatsList from "~/components/ChatsList/ChatsList";
-import IconSelection from "~/components/Modals/IconSelector";
+import { ChatProvider } from "~/contexts/chatContext";
 
 export default function Chats() {
-  const { allUsers, allChats, users, activeChat } =
+  const { allUsers, allChats, users, activeChat, usersChats, chatObjects } =
     useLoaderData<typeof loader>();
+  const chats = chatObjects as ChatObject[] | null;
+  const chat = activeChat as ChatObject | null;
   const { user } = useUserContext();
-  console.log("user is", user);
-  // const currentUser = user as User;
-  // const auth = useLoaderData<typeof loader>();
-  //   const socket = useContext(SocketContext);
-  //   useEffect(() => {
-  //     if (!socket) return;
 
-  //     socket.on("event", (data) => {
-  //       console.log(data);
-  //     });
-
-  //     socket.emit("something", "ping");
-  //   }, [socket]);
-  //console.log("chat auth", user, users, allUsers, allChats);
   return (
+    // <ChatProvider initialChats={chats} initialChat={chat}>
     <PageLayout>
       <div className="flex w-full align-stretch justify-between">
-        <div className="flex flex-col w-2/6  pt-20 pb-14 px-3 bg-amber-100">
-          <div className="flex justify-between">
+        <div className="flex flex-col w-2/6  border-r-1 border-slate-100 border-solid">
+          <div className="flex justify-between border-b-1 border-slate-100 border-solid p-3">
             <p>Chats</p>
             <div className="flex justify-evenly">
-              <p className="p-2">Add New</p>
-              <p className="p-2">Filter</p>
+              <button aria-label="Write new message" className="p-2">
+                <span className="material-symbols-outlined">note_add</span>
+              </button>
+
+              <button aria-label="Filter chats" className="p-2">
+                <span className="material-symbols-outlined">filter_list</span>
+              </button>
             </div>
           </div>
 
-          {user && <ChatsList user={user} class={"w-4/6"} />}
+          {user && <ChatsList class={" p-3"} />}
         </div>
-        <div className="w-4/6 py-12 px-3">
+        <div className="w-4/6 p-3 items-stretch flex max-h-screen">
           <Outlet />
         </div>
       </div>
     </PageLayout>
+    // </ChatProvider>
   );
 }
 
@@ -55,13 +57,19 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const auth = await authenticator.isAuthenticated(request, {
     failureRedirect: "/login",
   });
+  const chatObjects: ChatObject[] = [];
   const allUsers = await getAllUsers();
   const users: User[] = allUsers.filter((u: User) => u.id !== auth.id);
-  const activeChat = params.chatId && (await getChat(params.chatId));
+  console.log("users", users);
+  const activeChat =
+    params.chatId && (await createChatObject(params.chatId, auth.id));
+  const usersChats = await getAllUsersChats(auth.id);
   await createPrivateChats(users, auth);
-  const allChats = await getAllChats();
-  const user = await getUser(auth.id);
-  return { user, allUsers, allChats, users, activeChat };
+  for (const chat of usersChats) {
+    const obj = await createChatObject(chat.id, auth.id);
+    chatObjects.push(obj);
+  }
+  return { allUsers, users, activeChat, usersChats, chatObjects };
 }
 
 async function createPrivateChats(users: User[], auth: User) {

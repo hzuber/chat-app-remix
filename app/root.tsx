@@ -10,7 +10,7 @@ import {
 import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
 
 import "./tailwind.css";
-import styles from "../app/assets/styles/Global.scss";
+// import styles from "../app/assets/styles/Global.scss";
 import { authenticator } from "../server/services/auth.server";
 import { socketContext } from "./socket.context";
 import { UserProvider } from "./contexts/userContext";
@@ -18,7 +18,7 @@ import { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import { DefaultEventsMap } from "socket.io";
 import { connect } from "./socket.client";
-import { getUser } from "server/users/utils";
+import { getAllUsers, getUser } from "server/users/utils";
 import { User } from "types";
 
 export const links: LinksFunction = () => [
@@ -35,14 +35,15 @@ export const links: LinksFunction = () => [
   },
   {
     rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=close,edit",
+    href: "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&v=1729414993802",
   },
 ];
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const auth = await authenticator.isAuthenticated(request);
   const user: User = auth && (await getUser(auth.id));
-  return json({ user });
+  const users: User[] = await getAllUsers();
+  return json({ user, users });
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -64,8 +65,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  const { user } = useLoaderData<typeof loader>();
+  const { user, users } = useLoaderData<typeof loader>();
   const currentUser = user as User;
+  const allUsers = users as User[];
   const [socket, setSocket] =
     useState<Socket<DefaultEventsMap, DefaultEventsMap>>();
 
@@ -85,7 +87,7 @@ export default function App() {
     });
   }, [socket]);
   return (
-    <UserProvider initialUser={currentUser}>
+    <UserProvider initialUser={currentUser} initialUsers={allUsers}>
       <socketContext.Provider value={socket}>
         <Outlet context={user} />
       </socketContext.Provider>

@@ -6,6 +6,8 @@ import { User } from "types";
 interface UserContextType {
   user: User | null;
   setUser: (user: User | null) => void;
+  users: User[];
+  setUsers: (users: User[]) => void;
 }
 
 // Create the context
@@ -23,14 +25,20 @@ export const useUserContext = () => {
 // Provider component that manages the state for active chat
 interface UserProviderProps {
   initialUser: User | null;
+  initialUsers: User[];
   children: ReactNode;
 }
 
-export const UserProvider = ({ initialUser, children }: UserProviderProps) => {
+export const UserProvider = ({
+  initialUser,
+  children,
+  initialUsers,
+}: UserProviderProps) => {
   const [user, setUser] = useState<User | null>(initialUser);
+  const [users, setUsers] = useState<User[]>(initialUsers);
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ user, setUser, users, setUsers }}>
       {children}
     </UserContext.Provider>
   );
