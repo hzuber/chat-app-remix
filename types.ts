@@ -37,12 +37,9 @@ export type Chat = {
 export type UserChat = {
   chatId: string;
   lastRead: Message | null;
-  // lastSent: Message | null;
   style: string | null;
   admin: boolean;
   deleted?: boolean;
-  // chatName: string;
-  // icon: Icon | null;
 };
 
 export type ChatObject = {

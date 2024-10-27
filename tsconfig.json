@@ -6,7 +6,8 @@
     "**/.server/**/*.tsx",
     "**/.client/**/*.ts",
     "**/.client/**/*.tsx",
-    "socket.server.ts"
+    "socket.server.ts",
+    "test.cjs"
   ],
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES2022"],
@@ -30,5 +31,8 @@
 
     // Vite takes care of building everything, not tsc.
     "noEmit": true
+  },
+  "ts-node": {
+    "esm": true // «———— enabling ESM for ts-node
   }
 }

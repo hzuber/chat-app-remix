@@ -1,28 +1,31 @@
-import { promises as fs } from "fs";
-import { fileURLToPath } from "url";
-import path from "path";
-import { Chat, ChatObject, Icon, Response, User, UserChat } from "types";
+import { PrismaClient, User, Chat } from "@prisma/client";
+import { ChatObject, Icon, Response, UserChat, chat } from "types";
 import { v4 as uuidv4 } from "uuid";
 import { getUser } from "server/users/utils";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const DB_PATH = path.resolve(__dirname, "db.chats.json");
-const USER_DB_PATH = path.resolve(__dirname, "../users/db.users.json");
+const prisma = new PrismaClient();
 
-async function readDB() {
+export async function getAllChats() {
   try {
-    const data = await fs.readFile(DB_PATH, "utf-8");
+    const data = await prisma.chat.findMany();
 
-    return JSON.parse(data);
+    return data;
   } catch (err) {
     return [];
   }
 }
 
-async function writeDB(Chat: Chat) {
+export async function addChats(chats: Chat[]) {
   try {
-    await fs.writeFile(DB_PATH, JSON.stringify(Chat, null, 2), "utf-8");
+    await prisma.chat.createMany({ data: chats });
+  } catch (err) {
+    console.error("Error writing to database:", err);
+  }
+}
+
+export async function addChat(chat: Chat) {
+  try {
+    await prisma.chat.create({ data: chat });
   } catch (err) {
     console.error("Error writing to database:", err);
   }
@@ -30,39 +33,26 @@ async function writeDB(Chat: Chat) {
 
 async function readUserDB() {
   try {
-    const data = await fs.readFile(USER_DB_PATH, "utf-8");
+    const data = await prisma.user.findMany();
 
-    return JSON.parse(data);
+    return data;
   } catch (err) {
     return [];
   }
 }
 
-async function writeUserDB(user: User) {
+async function writeUserDB(users: User[]) {
   try {
-    await fs.writeFile(USER_DB_PATH, JSON.stringify(user, null, 2), "utf-8");
+    await prisma.chat.createMany({ data: users });
   } catch (err) {
-    //console.error("Error writing to database:", err);
+    console.error("Error writing to user database:", err);
   }
-}
-
-export async function getAllChats() {
-  const db = await readDB();
-  if (!db) {
-    throw new Error("Unable to read database");
-  }
-  return db;
-}
-
-export async function getAllUsersChats(id: string) {
-  const db = await readDB();
-  const usersChats: Chat[] = db.filter((c: Chat) => c.members.includes(id));
-  return usersChats;
 }
 
 export async function getChat(id: string) {
-  const db = await readDB();
-  const chat = db.find((c: Chat) => c.id === id);
+  const chat = await prisma.chat.findUnique({
+    where: { id },
+  });
   if (!chat) {
     throw new Error("Chat not found");
   } else {
@@ -71,13 +61,29 @@ export async function getChat(id: string) {
 }
 
 export async function getPrivateChat(members: string[]) {
-  const db = await readDB();
-  const chat = db.find(
-    (chat: Chat) =>
-      chat.type === "private_chat" &&
-      chat.members.includes(members[0]) &&
-      chat.members.includes(members[1])
-  );
+  const userChats = await prisma.user.findMany({
+    where: {
+      OR: [{ id: members[0] }, { id: members[1] }],
+    },
+    select: {
+      userChats: {
+        where: {
+          chat: {
+            type: "private_chat",
+          },
+        },
+      },
+    },
+  });
+  if (userChats.length !== 2) {
+    return [];
+  }
+  const id = userChats[0].userChats[0].chatId;
+  const chat = await prisma.chat.findUnique({
+    where: {
+      id: id,
+    },
+  });
   return chat;
 }
 
