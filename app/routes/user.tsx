@@ -32,7 +32,8 @@ const UserProfile = () => {
   const [userInfo, setUserInfo] = useState<User | null>(null);
   // const { user } = useLoaderData<typeof loader>();
   const { user } = useUserContext();
-  const actionData = useActionData<typeof action>();
+  const { ...actionData } = useActionData<typeof action>();
+  const updatedUser = actionData.updatedUser as User;
   const [errors, setErrors] = useState<Errors>({});
   // const error = actionData?.error ?? null;
   const [password, setPassword] = useState("");
@@ -68,7 +69,7 @@ const UserProfile = () => {
   useEffect(() => {
     console.log("updatedUser", actionData);
     if (actionData?.updatedUser) {
-      setUserInfo(actionData.updatedUser);
+      setUserInfo(updatedUser);
     }
   }, [actionData]);
 
@@ -191,7 +192,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const auth = await authenticator.isAuthenticated(request, {
     failureRedirect: "/login",
   });
-  const user = await getUser(auth.id);
+  const user = auth && (await getUser(auth.id));
   return json({ user: user });
 }
 

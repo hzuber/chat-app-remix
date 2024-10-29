@@ -24,22 +24,24 @@ export type Message = {
 
 export type Chat = {
   id: string;
-  members: string[];
+  members: string[] | null;
   icon: Icon | null;
   description: string | null;
   chatName: string | null;
   type: "public" | "private_chat" | "private_group";
   lastSent: Message | null;
-  messages: string[] | null;
-  admins: string[];
+  messages: Message[] | null;
+  admins: string[] | null;
 };
 
 export type UserChat = {
+  id: string;
+  userId: string;
   chatId: string;
   lastRead: Message | null;
-  style: string | null;
+  theme: string | null;
   admin: boolean;
-  deleted?: boolean;
+  deleted?: boolean | null;
 };
 
 export type ChatObject = {

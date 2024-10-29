@@ -36,7 +36,8 @@ const ChooseIcon = () => {
     null
   );
   const [userInfo, setUserInfo] = useState<User | null>(null);
-  const { user } = useLoaderData<typeof loader>();
+  const u = useLoaderData<typeof loader>();
+  const user = u.user as User;
   const actionData = useActionData<typeof action>();
   const [errors, setErrors] = useState<Errors>({});
   // const error = actionData?.error ?? null;
@@ -132,7 +133,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const auth = await authenticator.isAuthenticated(request, {
     failureRedirect: "/login",
   });
-  const user = await getUser(auth.id);
+  const user = auth && (await getUser(auth.id));
   return json({ user: user });
 }
 

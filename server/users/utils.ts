@@ -1,13 +1,15 @@
-import { promises as fs } from "fs";
-import { fileURLToPath } from "url";
+import {
+  PrismaClient,
+  User as PrismaUser,
+  UserChat as PrismaUserChat,
+  Chat as PrismaChat,
+} from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from "uuid";
-import path from "path";
 import { Icon, Response, User, UserChat } from "types";
+import { prismaUserToUser } from "server/general/prismaMapping";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const DB_PATH = path.resolve(__dirname, "db.users.json");
+const prisma = new PrismaClient();
 
 export async function hashPassword(password: string) {
   const salt = await bcrypt.genSalt(10);
@@ -19,47 +21,37 @@ export async function comparePasswords(password: string, hash: string) {
   return await bcrypt.compare(password, hash);
 }
 
-async function readDB() {
-  try {
-    const data = await fs.readFile(DB_PATH, "utf-8");
-
-    return JSON.parse(data);
-  } catch (err) {
-    return [];
-  }
-}
-
-async function writeDB(User: User) {
-  try {
-    await fs.writeFile(DB_PATH, JSON.stringify(User, null, 2), "utf-8");
-  } catch (err) {
-    console.error("Error writing to database:", err);
-  }
-}
-
 export const checkUserExists = async (email: string) => {
-  const db = await readDB();
-  (await db.user.count({
-    where: { email },
-  })) > 0;
+  const exists =
+    (await prisma.user.count({
+      where: { email },
+    })) > 0;
+  return exists;
 };
 
 export async function signup(
   email: string,
   password: string,
   username?: string,
-  icon?: Icon
+  icon?: Icon | null
 ) {
-  const db = await readDB();
   let user: User;
-  const response: Response = { status: 200, data: { user: null }, error: null };
-  if (db.find((user: User) => user.email === email)) {
-    response.error =
-      "A user with this email already exists <a className='text-red-400' href='/login'>Login</a>";
-    response.status = 401;
+  let prismaUser: PrismaUser;
+  if (await checkUserExists(email)) {
+    throw new Error(
+      "A user with this email already exists <a className='text-red-400' href='/login'>Login</a>"
+    );
   } else {
     const hashedPassword = await hashPassword(password);
     const id = uuidv4();
+    prismaUser = {
+      id,
+      email,
+      password: hashedPassword,
+      username: username ? username : null,
+      iconIcon: icon ? icon.icon : null,
+      iconBg: icon ? icon.background : null,
+    };
     user = {
       id,
       email,
@@ -68,16 +60,20 @@ export async function signup(
       icon: icon ? { icon: icon.icon, background: icon.background } : null,
       chats: [],
     };
-    db.push(user);
-    await writeDB(db);
-    response.data.user = user;
+
+    await prisma.user.create({
+      data: prismaUser,
+    });
   }
-  return response;
+  return user;
 }
 
 export async function login(email: string, password: string) {
-  const db = await readDB();
-  const user = db.find((user: User) => user.email === email);
+  const user: PrismaUser | null = await prisma.user.findUnique({
+    where: {
+      email: email,
+    },
+  });
   if (!user) {
     throw new Error("User not found");
   }
@@ -85,74 +81,80 @@ export async function login(email: string, password: string) {
   if (!comparison) {
     throw new Error("Incorrect password");
   } else {
-    return user;
+    return await prismaUserToUser(user);
   }
 }
 
 //getAllUsers
 export async function getAllUsers() {
-  // console.log("run get all users");
-  const db = await readDB();
-  if (!db) {
+  const data: PrismaUser[] | null = await prisma.user.findMany();
+  const users = [];
+  if (!data) {
     throw new Error("Unable to read database");
   }
-  return db;
+  for await (const u of data) {
+    const user = await prismaUserToUser(u);
+    users.push(user);
+  }
+  return users;
 }
 
 //getUser(id)
 export async function getUser(id: string) {
-  const db = await readDB();
-  const user = db.find((user: User) => user.id === id);
-  // console.log("get user", id);
-  if (!user) {
-    throw new Error("User not found");
+  const data: PrismaUser | null = await prisma.user.findUnique({
+    where: {
+      id: id,
+    },
+  });
+  if (!data) {
+    throw new Error("getUser : User not found" + id);
   } else {
+    const user = await prismaUserToUser(data);
     return user;
   }
 }
 
 //update function
-export async function updateUser(id: string, updatedData: Partial<User>) {
-  console.log("update user", id, updatedData);
-  const db = await readDB();
-  const index = db.findIndex((user: User) => user.id === id);
-
-  if (index === -1) {
-    console.log("User not found");
-    throw new Error("User not found");
-  }
-
-  console.log("UserIndex", index);
-  if (updatedData.password) {
-    const hashedPassword = await hashPassword(updatedData.password);
-    updatedData.password = hashedPassword;
-  }
-  db[index] = { ...db[index], ...updatedData };
-  await writeDB(db);
-  return db[index];
-}
-
-export async function updateUserChat(
-  userId: string,
-  chatId: string,
-  updatedData: Partial<UserChat>
-) {
-  const db = await readDB();
-  const user: User = db.find((u: User) => u.id === userId);
-
+export async function updateUser(id: string, updatedPrismaData: Partial<User>) {
+  console.log("update user", id, updatedPrismaData);
+  // const updatedPrismaData: Partial<PrismaUser> = {};
+  const user = await getUser(id);
   if (!user) {
-    console.log("User not found");
     throw new Error("User not found");
   }
-  const index = user.chats?.findIndex((c) => c.chatId === chatId);
-
-  if (index === -1 || !user.chats || !index) {
-    console.log("UserChat not found");
-    throw new Error("UserChat not found");
-  }
-  user.chats[index] = { ...user.chats[index], ...updatedData };
-  await writeDB(db);
-  return user.chats[index];
+  // if (updatedData.password) {
+  //   const hashedPassword = await hashPassword(updatedData.password);
+  //   updatedPrismaData.password = hashedPassword;
+  // }
+  // if (updatedData.icon) {
+  //   updatedPrismaData.iconIcon = updatedData.icon.icon;
+  //   updatedPrismaData.iconBg = updatedData.icon.background;
+  // }
+  // if (updatedData.username) {
+  //   updatedPrismaData.username = updatedData.username;
+  // }
+  const updatedPrismaUser: PrismaUser = await prisma.user.update({
+    where: {
+      id: id,
+    },
+    data: {
+      // password: updatedPrismaData.password
+      //   ? updatedPrismaData.password
+      //   : user.password,
+      // username: updatedPrismaData.username
+      //   ? updatedPrismaData.username
+      //   : user.username,
+      // iconIcon: updatedPrismaData.iconIcon
+      //   ? updatedPrismaData.iconIcon
+      //   : user.icon?.icon,
+      // iconBg: updatedPrismaData.iconBg
+      //   ? updatedPrismaData.iconBg
+      //   : user.icon?.background,
+      ...updatedPrismaData,
+    },
+  });
+  const updatedUser = await prismaUserToUser(updatedPrismaUser);
+  return updatedUser;
 }
 
 //soft delete function

@@ -53,6 +53,8 @@ export const PageLayout = ({ children }: { children: React.ReactNode }) => {
           maxHeight: `${contentHeight}px`,
           minWidth: "100%",
           display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
         }}
       >
         {children}

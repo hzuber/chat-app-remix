@@ -8,14 +8,17 @@ import { useUserContext } from "~/contexts/userContext";
 import { getAllUsers, getUser } from "server/users/utils";
 import { Chat, ChatObject, User } from "../../types";
 import {
+  addChat,
   addPrivateChat,
   createChatObject,
   getAllChats,
   getAllUsersChats,
   getChat,
+  getUsersChats,
 } from "server/chats/utils";
 import ChatsList from "~/components/ChatsList/ChatsList";
 import { ChatProvider } from "~/contexts/chatContext";
+import { getUsersUserChats } from "server/chats/userChatsUtils";
 
 export default function Chats() {
   const { allUsers, allChats, users, activeChat, usersChats, chatObjects } =
@@ -61,12 +64,13 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const allUsers = await getAllUsers();
   const users: User[] = allUsers.filter((u: User) => u.id !== auth.id);
   console.log("users", users);
+  await createPrivateChats(users, auth);
   const activeChat =
     params.chatId && (await createChatObject(params.chatId, auth.id));
-  const usersChats = await getAllUsersChats(auth.id);
-  await createPrivateChats(users, auth);
+  const usersChats = await getUsersUserChats(auth.id);
   for (const chat of usersChats) {
-    const obj = await createChatObject(chat.id, auth.id);
+    console.log("chat of usersChats", chat);
+    const obj = await createChatObject(chat.chatId, auth.id);
     chatObjects.push(obj);
   }
   return { allUsers, users, activeChat, usersChats, chatObjects };
@@ -75,6 +79,14 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 async function createPrivateChats(users: User[], auth: User) {
   for (const user of users) {
     //console.log("Creating private chat with user: ", user.email);
-    await addPrivateChat([auth.id, user.id], null);
+    await addChat(
+      auth.id,
+      [auth.id, user.id],
+      null,
+      null,
+      null,
+      "private_chat",
+      null
+    );
   }
 }

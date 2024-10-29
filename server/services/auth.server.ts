@@ -1,8 +1,9 @@
 import { Authenticator, AuthorizationError } from "remix-auth";
 import { FormStrategy } from "remix-auth-form";
-import { Response, User } from "../../types";
+import { Icon, Response, User } from "../../types";
 import { sessionStorage } from "server/services/session.server";
 import { login, signup } from "server/users/utils";
+import { createIcon } from "server/general/utils";
 
 export const authenticator = new Authenticator<User>(sessionStorage, {
   sessionErrorKey: "chat-app-error-key",
@@ -21,12 +22,10 @@ authenticator.use(
     const email = form.get("email")?.toString();
     const password = form.get("password")?.toString();
     console.log("email", email, "passowrd", password);
-    // const session = await sessionStorage.getSession();
-
-    const user: User = email && password && (await login(email, password));
-    // const theSessionUser = session.get("user");
-    // const theSessionEmail = session.get("email");
-    // console.log("session", theSessionUser, theSessionEmail);
+    const user = email && password && (await login(email, password));
+    if (!user || typeof user === "string") {
+      throw new Error("unable to authenticate");
+    }
     return user;
   }),
   "user-login"
@@ -37,29 +36,27 @@ authenticator.use(
     const email = form.get("email")?.toString();
     const password = form.get("password")?.toString();
     const username = form.get("username")?.toString();
-    const icon = form.get("icon")?.toString();
-    let errorText = "Unable to perform action";
+    const iconIcon = form.get("iconIcon")?.toString();
+    const iconBg = form.get("iconBg")?.toString();
+    const icon: Icon | null | undefined = createIcon(iconIcon, iconBg);
+    const errorText = "Unable to perform action";
     if (email && password) {
       try {
-        const response: Response = await signup(
+        const user: User = await signup(
           email,
           password,
           username,
-          icon
+          icon && icon
         );
-        if (response && response.data.user) {
-          return response.data.user;
-        }
-        if (response?.error) {
-          errorText = response.error;
-          console.log("auth.server", response.error);
+        if (user) {
+          return user;
         }
         throw new AuthorizationError(errorText);
       } catch (err) {
         throw new AuthorizationError(errorText);
       }
     } else {
-      throw new Error("Unable to perform action");
+      throw new Error(errorText);
     }
   }),
   "user-signup"
