@@ -74,7 +74,7 @@ async function main() {
       id: "6e90b4e3-e879-42f8-b12b-f25879a53c35",
       author: "c8941aae-484c-4ea7-ac83-be12012c19cc",
       date: new Date("2024-10-22 17:29:57.000"),
-      chatId: "12e7ce49-827f-481e-a137-27142d24778b",
+      chatId: "576822fe-e592-4907-adf0-3724e3a28c30",
       text: "This is the first message in alice and bob's chat",
       dateEdited: null,
       status: "live",

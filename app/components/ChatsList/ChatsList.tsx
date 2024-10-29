@@ -1,4 +1,4 @@
-// import { Chat, User } from "types";
+import { UserChat, User, ChatObject } from "types";
 import ChatsListItem from "./ChatsListItem";
 import { NavLink } from "@remix-run/react";
 // import { useContext } from "react";
@@ -6,19 +6,20 @@ import { NavLink } from "@remix-run/react";
 // import { useChatContext } from "~/contexts/chatContext";
 
 interface Props {
-  // user: User;
+  user: User;
   class?: string;
-  // chats: Chat[] | null;
+  userChats: UserChat[] | null;
+  chatObjects: ChatObject[] | null;
 }
 
 const ChatsList = (props: Props) => {
-  // const { user, chats } = props;
+  const { user, userChats, chatObjects } = props;
   // const {user} = useUserContext()
   // const { chats } = useChatContext();
   return (
     <div className={`flex flex-col ${props.class} `}>
-      {/* {chats &&
-        chats.map((chat) => (
+      {chatObjects &&
+        chatObjects.map((chat) => (
           <NavLink
             key={chat.chat.id}
             to={`/chats/${chat.chat.id}`}
@@ -28,7 +29,7 @@ const ChatsList = (props: Props) => {
           >
             <ChatsListItem chat={chat} />
           </NavLink>
-        ))} */}
+        ))}
     </div>
   );
 };

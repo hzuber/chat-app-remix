@@ -40,7 +40,7 @@ export async function getChat(id: string) {
   });
   if (!prismaChat) {
     console.log("if (!prismaChat) {", id, prismaChat);
-    throw new Error("getChat : Chat not found");
+    throw new Error("getChat : Chat not found" + id);
   } else {
     const chat: Chat | null = await prismaChatToChat(prismaChat);
     return chat;
@@ -59,7 +59,8 @@ export async function addChat(
   if (type === "private_chat") {
     const privateChat = await getPrivateChat(members);
     if (privateChat) {
-      console.log("Private chat already exists");
+      console.log("Private chat already exists", privateChat.id);
+      return;
     }
   }
   const id = uuidv4();
@@ -72,9 +73,14 @@ export async function addChat(
     type,
     lastSent: null,
   };
+  console.log("should I return??", chat);
   try {
-    await prisma.chat.create({ data: chat });
+    const newChat = await prisma.chat.create({
+      data: chat,
+    });
+    console.log("newChat", newChat);
     for (const m of members) {
+      console.log("for (const m of members)", m, "chatId", id);
       await createUserChat(m, id, theme, m === addedBy);
     }
     return prismaChatToChat(chat);
@@ -106,9 +112,13 @@ export async function getUsersChats(id: string) {
 }
 
 export async function getPrivateChat(members: string[]) {
-  const userChats = await prisma.user.findMany({
+  let privateChatId: string = "";
+  if (members.length !== 2) {
+    throw new Error("A private chat may only have two members");
+  }
+  const user1Chats = await prisma.user.findUnique({
     where: {
-      OR: [{ id: members[0] }, { id: members[1] }],
+      id: members[0],
     },
     select: {
       userChats: {
@@ -117,16 +127,41 @@ export async function getPrivateChat(members: string[]) {
             type: "private_chat",
           },
         },
+        select: {
+          chatId: true,
+        },
       },
     },
   });
-  if (userChats.length !== 2) {
-    return [];
+  if (!user1Chats) {
+    return null;
   }
-  const id = userChats[0].userChats[0].chatId;
+  for await (const uc of user1Chats.userChats) {
+    const chatId = await prisma.user.findUnique({
+      where: {
+        id: members[1],
+      },
+      select: {
+        userChats: {
+          where: {
+            chatId: uc.chatId,
+          },
+          select: {
+            chatId: true,
+          },
+        },
+      },
+    });
+    if (chatId?.userChats.length !== 0) {
+      privateChatId = uc.chatId;
+    }
+  }
+  if (privateChatId.length === 0) {
+    return null;
+  }
   const prismaChat = await prisma.chat.findUnique({
     where: {
-      id: id,
+      id: privateChatId,
     },
   });
   const chat = prismaChat && (await prismaChatToChat(prismaChat));

@@ -6,7 +6,7 @@ import { useContext, useEffect, useState } from "react";
 import { SocketContext, useSocket } from "~/socket.context";
 import { useUserContext } from "~/contexts/userContext";
 import { getAllUsers, getUser } from "server/users/utils";
-import { Chat, ChatObject, User } from "../../types";
+import { Chat, ChatObject, User, UserChat } from "../../types";
 import {
   addChat,
   addPrivateChat,
@@ -25,12 +25,13 @@ export default function Chats() {
     useLoaderData<typeof loader>();
   const chats = chatObjects as ChatObject[] | null;
   const chat = activeChat as ChatObject | null;
+  const userChats = usersChats as UserChat[];
   const { user } = useUserContext();
 
   return (
     // <ChatProvider initialChats={chats} initialChat={chat}>
     <PageLayout>
-      <div className="flex w-full align-stretch justify-between">
+      <div className="flex w-full align-stretch justify-between h-full">
         <div className="flex flex-col w-2/6  border-r-1 border-slate-100 border-solid">
           <div className="flex justify-between border-b-1 border-slate-100 border-solid p-3">
             <p>Chats</p>
@@ -45,7 +46,14 @@ export default function Chats() {
             </div>
           </div>
 
-          {user && <ChatsList class={" p-3"} />}
+          {user && (
+            <ChatsList
+              class={" p-3"}
+              user={user}
+              userChats={userChats}
+              chatObjects={chats}
+            />
+          )}
         </div>
         <div className="w-4/6 p-3 items-stretch flex max-h-screen">
           <Outlet />
@@ -69,7 +77,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     params.chatId && (await createChatObject(params.chatId, auth.id));
   const usersChats = await getUsersUserChats(auth.id);
   for (const chat of usersChats) {
-    console.log("chat of usersChats", chat);
+    // console.log("chat of usersChats", chat);
     const obj = await createChatObject(chat.chatId, auth.id);
     chatObjects.push(obj);
   }
@@ -78,7 +86,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
 async function createPrivateChats(users: User[], auth: User) {
   for (const user of users) {
-    //console.log("Creating private chat with user: ", user.email);
+    console.log("Creating private chat with user: ", user.email);
     await addChat(
       auth.id,
       [auth.id, user.id],

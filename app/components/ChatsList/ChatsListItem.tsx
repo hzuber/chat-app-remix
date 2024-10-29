@@ -9,13 +9,13 @@ interface Props {
 
 const ChatsListItem = ({ chat }: Props) => {
   const { users } = useUserContext();
-  const lastSent =
-    typeof chat.chat.lastSent === "object" ? chat.chat.lastSent : null;
+  const lastSent = chat.chat.lastSent;
   const translateDate = lastSent && translateDates(lastSent.date);
   const lastSentAuthor = users.find((u) => u.id === lastSent?.author);
   const chatIcon = chat.icon && chat.icon.icon ? chat.icon.icon : null;
   const chatIconBg =
     chat.icon && chat.icon.background ? chat.icon.background : null;
+  // console.log("chatslistitem last", chat.chat);
   return (
     <div className="my-3 mb-4">
       <div className="flex items-center">

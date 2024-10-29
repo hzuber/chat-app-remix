@@ -52,20 +52,19 @@ export async function prismaChatToChat(prismaChat: PrismaChat) {
     const members: string[] = [];
     const messages: Message[] = [];
     const admins: string[] = [];
-    const mem = await prisma.userChat.findMany({
-      where: {
-        chatId: prismaChat.id,
-      },
-      select: {
-        userId: true,
-        isAdmin: true,
-      },
-    });
-    const pushMember = (member: { userId: string; isAdmin: boolean }) => {
-      members.push(member.userId);
-      member.isAdmin && admins.push(member.userId);
-    };
-    mem.map((m) => pushMember(m));
+    let lastMessage: Message | null = null;
+    await prisma.userChat
+      .findMany({
+        where: {
+          chatId: prismaChat.id,
+        },
+      })
+      .then((res) => {
+        for (const mem of res) {
+          members.push(mem.userId);
+          mem.isAdmin && admins.push(mem.userId);
+        }
+      });
     const prismaMessages = await prisma.message.findMany({
       where: {
         chatId: prismaChat.id,
@@ -74,19 +73,14 @@ export async function prismaChatToChat(prismaChat: PrismaChat) {
         date: "desc",
       },
     });
-    prismaMessages.map((mess) => pushMessages(mess));
-    const pushMessages = (mess: PrismaMessage) => {
-      const message: Message = {
-        id: mess.id,
-        author: mess.author,
-        date: mess.date,
-        chatId: mess.chatId,
-        text: mess.text,
-        status: prismaStatusToStatus(mess.status),
-        dateEdited: mess.dateEdited,
-      };
+    for (const mess of prismaMessages) {
+      const message = prismaMessageToMessage(mess);
       messages.push(message);
-    };
+      if (mess.id === prismaChat.lastSent) {
+        lastMessage = message;
+      }
+    }
+
     chat = {
       id: prismaChat.id,
       members: members,
@@ -94,7 +88,7 @@ export async function prismaChatToChat(prismaChat: PrismaChat) {
       description: prismaChat.description,
       chatName: prismaChat.chatName,
       type: prismaChatTypeToType(prismaChat.type),
-      lastSent: messages && messages.length ? messages[length - 1] : null,
+      lastSent: lastMessage ? lastMessage : null,
       messages: messages,
       admins: admins,
     };
