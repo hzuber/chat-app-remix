@@ -89,23 +89,26 @@ export async function addChat(
   }
 }
 
-export async function getUsersChats(id: string) {
+export async function getUsersChats(userid: string) {
   const chats: Chat[] = [];
-  const userChats = await prisma.user.findUnique({
-    where: { id },
+  const userChats = await prisma.userChat.findMany({
+    where: {
+      userId: userid,
+    },
     select: {
-      userChats: {
-        select: {
-          chat: true,
-        },
+      chat: true,
+    },
+    orderBy: {
+      chat: {
+        lastSent: "desc",
       },
     },
   });
   if (!userChats) {
     throw new Error("Chat does not exist");
   }
-  for (const c of userChats.userChats) {
-    const chat = c.chat && (await prismaChatToChat(c.chat));
+  for (const uc of userChats) {
+    const chat = uc.chat && (await prismaChatToChat(uc.chat));
     chat && chats.push(chat);
   }
   return chats;

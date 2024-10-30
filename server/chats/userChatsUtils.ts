@@ -38,19 +38,21 @@ export async function getUserChat(id: string) {
   }
 }
 
-export async function getUsersUserChats(id: string) {
+export async function getUsersUserChats(userid: string) {
   const userChats: UserChat[] = [];
   try {
-    const data = await prisma.user.findUnique({
+    const data = await prisma.userChat.findMany({
       where: {
-        id: id,
+        userId: userid,
       },
-      select: {
-        userChats: true,
+      orderBy: {
+        chat: {
+          lastSent: "desc",
+        },
       },
     });
-    if (data && data.userChats.length > 0) {
-      for await (const uc of data.userChats) {
+    if (data && data.length > 0) {
+      for await (const uc of data) {
         const chat = await prismaUserChatToUserChat(uc);
         userChats.push(chat);
       }

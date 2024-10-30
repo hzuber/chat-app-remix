@@ -40,6 +40,11 @@ export async function getChatMessages(chatId: string) {
     where: {
       chatId,
     },
+    orderBy: [
+      {
+        date: "asc",
+      },
+    ],
   });
   const messages: Message[] = [];
   if (!data) {

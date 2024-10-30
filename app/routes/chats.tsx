@@ -71,22 +71,23 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const chatObjects: ChatObject[] = [];
   const allUsers = await getAllUsers();
   const users: User[] = allUsers.filter((u: User) => u.id !== auth.id);
-  console.log("users", users);
+  // console.log("users", users);
   await createPrivateChats(users, auth);
   const activeChat =
     params.chatId && (await createChatObject(params.chatId, auth.id));
   const usersChats = await getUsersUserChats(auth.id);
-  for (const chat of usersChats) {
-    // console.log("chat of usersChats", chat);
+  for await (const chat of usersChats) {
     const obj = await createChatObject(chat.chatId, auth.id);
+    console.log("chat of usersChats", obj.chat.lastSent?.date);
     chatObjects.push(obj);
   }
+  // console.log(chatObjects);
   return { allUsers, users, activeChat, usersChats, chatObjects };
 }
 
 async function createPrivateChats(users: User[], auth: User) {
   for (const user of users) {
-    console.log("Creating private chat with user: ", user.email);
+    // console.log("Creating private chat with user: ", user.email);
     await addChat(
       auth.id,
       [auth.id, user.id],
