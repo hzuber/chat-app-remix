@@ -74,33 +74,6 @@ export async function getUserChatFromChatId(chatId: string, userId: string) {
   return userChat;
 }
 
-// export async function createUserChats(
-//   members: string[],
-//   chatId: string,
-//   theme?: string | null,
-//   admin?: boolean
-// ) {
-//   try {
-//     const data: PrismaUserChat[] = [];
-//     for (const u of members) {
-//       const id = uuidv4();
-//       const userChat = {
-//         id: id,
-//         userId: u,
-//         chatId: chatId,
-//         lastRead: null,
-//         isAdmin: admin ? admin : false,
-//         theme: theme ? theme : null,
-//         deleted: false,
-//       };
-//       data.push(userChat);
-//     }
-//     await prisma.userChat.createMany({ data: data, skipDuplicates: true });
-//   } catch (err) {
-//     console.error("Error writing to database:", err);
-//   }
-// }
-
 export async function createUserChat(
   userId: string,
   chatId: string,

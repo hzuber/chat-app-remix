@@ -7,11 +7,15 @@ interface Props {
   isPrivate: boolean;
 }
 
-const SingleMessage = ({ message, isPrivate }: Props) => {
+
+const SingleMessage = ({ message, isPrivate }: Props,
+) => {
   const { user, users } = useUserContext();
   const author = users?.find((u) => u.id === message.author);
   const { showDate, showTime, isToday } = translateDates(message.date);
-  const align = author && author.id === user?.id ? "self-end" : "self-start";
+  const align = message.author === "i-am-the-author" ? "self-end" : author && author.id === user?.id ? "self-end" : "self-start";
+
+  console.log("align", align, message, message,)
   return (
     <div
       //   ref={(el) => (messageRefs.current[index] = el)}

@@ -42,7 +42,7 @@ export async function getChatMessages(chatId: string) {
     },
     orderBy: [
       {
-        date: "asc",
+        date: "desc",
       },
     ],
   });
@@ -62,6 +62,7 @@ export async function createNewMessage(
   text: string,
   status: "draft" | "live" | "edited" | "deleted"
 ) {
+  console.log("createNewMessage", text)
   const id = uuidv4();
   const now = new Date();
   try {

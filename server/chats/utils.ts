@@ -34,12 +34,10 @@ export async function getAllChats() {
 }
 
 export async function getChat(id: string) {
-  console.log("id", id);
   const prismaChat: PrismaChat | null = await prisma.chat.findUnique({
     where: { id },
   });
   if (!prismaChat) {
-    console.log("if (!prismaChat) {", id, prismaChat);
     throw new Error("getChat : Chat not found" + id);
   } else {
     const chat: Chat | null = await prismaChatToChat(prismaChat);
@@ -59,7 +57,6 @@ export async function addChat(
   if (type === "private_chat") {
     const privateChat = await getPrivateChat(members);
     if (privateChat) {
-      console.log("Private chat already exists", privateChat.id);
       return;
     }
   }
@@ -73,14 +70,11 @@ export async function addChat(
     type,
     lastSent: null,
   };
-  console.log("should I return??", chat);
   try {
     const newChat = await prisma.chat.create({
       data: chat,
     });
-    console.log("newChat", newChat);
     for (const m of members) {
-      console.log("for (const m of members)", m, "chatId", id);
       await createUserChat(m, id, theme, m === addedBy);
     }
     return prismaChatToChat(chat);
@@ -179,11 +173,10 @@ export async function createChatObject(chatId: string, userId: string) {
   // const userChat = uChat as PrismaUserChat;
   // const userChat = user.chats?.find((c) => c.chatId === chatId);
   if (!chat) {
-    console.log("createChatObject", chatId);
     throw new Error("createChatObject: Cannot find chat");
   }
   if (chat?.type === "private_chat") {
-    const otherMember = await prisma.userChat.findUnique({
+    const otherMember = await prisma.userChat.findFirst({
       where: {
         chatId,
         NOT: {

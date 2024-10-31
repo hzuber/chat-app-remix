@@ -52,7 +52,7 @@ export type ChatObject = {
 };
 
 export type Response = {
-  status: number;
+  success:boolean;
   error: string | null | undefined;
   data: {
     chat?: Chat | null;
@@ -63,5 +63,12 @@ export type Response = {
     messages?: Message[] | null;
     userChat?: UserChat | null;
     userChats?: UserChat[] | null;
+    text?:string| null
   };
 };
+
+export type ActionResponse={
+  success:boolean;
+  data:{} | null;
+  error: null | string
+}

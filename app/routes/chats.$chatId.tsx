@@ -10,7 +10,7 @@ import { authenticator } from "server/services/auth.server";
 // import { socketContext } from "~/socket.context";
 // import { useUserContext } from "~/contexts/userContext";
 import { createChatObject, getChat } from "server/chats/utils";
-import { Chat, ChatObject, Icon, Message, User, UserChat } from "types";
+import { ActionResponse, Chat, ChatObject, Icon, Message, Response, User, UserChat } from "types";
 import { createNewMessage, getChatMessages } from "server/messages/utils";
 // import MessageContainer from "~/components/MessageContainer/MessageContainer";
 // import { UserIcon } from "~/components/UserIcon";
@@ -18,7 +18,7 @@ import { getIO } from "socket.server";
 // import { getUser } from "server/users/utils";
 // import { useChatContext } from "~/contexts/chatContext";
 
-import { useFetcher, useLoaderData, Form } from "@remix-run/react";
+import { useFetcher, useLoaderData, Form, useSubmit, useActionData } from "@remix-run/react";
 import { useContext, useEffect, useMemo, useState } from "react";
 // import { socketContext } from "~/socket.context";
 // import { useUserContext } from "~/contexts/userContext";
@@ -27,7 +27,9 @@ import { UserIcon } from "~/components/UserIcon";
 // import { useChatContext } from "~/contexts/chatContext";
 import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
 import SingleMessage from "~/components/MessageContainer/SingleMessage";
-import { ChatMessageContainer } from "~/components/MessageContainer/ChatMessageCOntainer";
+import { ChatMessageContainer } from "~/components/MessageContainer/ChatMessageContainer";
+import { text } from "express";
+import { useUserContext } from "~/contexts/userContext";
 
 function parseMessageDates(
   message: Omit<Message, "date" | "dateEdited"> & {
@@ -45,7 +47,7 @@ function parseMessageDates(
 export default function ActiveChat() {
   // const socket = useContext(socketContext);
   // const fetcher = useFetcher();
-  // const { user } = useUserContext();
+  const { user } = useUserContext();
   // const { activeChat, setActiveChat } = useChatContext();
   // const chat = activeChat?.chat;
   // const fetcherData = useFetcher<typeof loader>();
@@ -55,7 +57,33 @@ export default function ActiveChat() {
   const [newMessageText, setNewMessageText] = useState("");
   const [messages, setMessages] = useState<Message[]>();
   const messageHistory = chatMessages.map(parseMessageDates);
+  const submit = useSubmit()
+  const fetcher = useFetcher()
+  const actionData = useActionData<typeof action>();
   // const isPrivate = activeChat?.chat.type === "private_chat";
+
+  const clickSubmit = (target: EventTarget & HTMLFormElement, text: string) => {
+    setNewMessageText("")
+    const mess: Message = {
+      id: "0000",
+      author: user ? user.id : "i-am-the-author",
+      date: new Date(),
+      chatId: theChat ? theChat.chat.id : "chatId",
+      text: text,
+      dateEdited: null,
+      status: "live"
+    }
+    messages ? setMessages([mess, ...messages]) : setMessages([mess])
+    submit(target, { method: "post" });
+    console.log("target", target, "text", text, "actionData", { ...actionData })
+  }
+
+  useEffect(() => {
+    if (actionData?.data && actionData.success) {
+      console.log("actionData", actionData);
+      actionData.data.text && setNewMessageText(actionData.data.text)
+    }
+  }, [actionData]);
 
   // useEffect(() => {
   //   if (socket && chat?.id) {
@@ -117,17 +145,17 @@ export default function ActiveChat() {
           />
           {/* <h6 className="mx-3">{activeChat?.name}</h6> */}
 
-          <h6 className="mx-3">name</h6>
+          <h6 className="mx-3">{theChat?.name ? theChat?.name : "Unnamed Chat"}</h6>
         </div>
-        <div className="flex flex-col max-h-full overflow-y-scroll pb-5">
-          {!messages?.length ? (
+        {!messages?.length ? (
+          <div className="flex flex-col max-h-full pb-5">
             <p className="mx-auto">There are no messages in this chat yet</p>
-          ) : (
-            <ChatMessageContainer messages={messages} isPrivate={true} />
-          )}
-        </div>
+          </div>
+        ) : (
+          <ChatMessageContainer messages={messages} isPrivate={true} />
+        )}
         <div className="card-footer input-group absolute bottom-0 w-full">
-          <Form method="post">
+          <Form method="post" onSubmit={e => { clickSubmit(e.currentTarget, newMessageText) }}>
             <div className="w-full flex items-end">
               <input
                 name="text"
@@ -141,6 +169,7 @@ export default function ActiveChat() {
                 <button
                   type="submit"
                   className="flex h-full py-1 px-3 items-center justify-center hover:opacity-75 rounded"
+
                 >
                   <span className="material-symbols-outlined text-theme-primary">
                     send
@@ -163,42 +192,19 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     theChat = await createChatObject(chatId, auth.id);
   }
   const chatMessages: Message[] = await getChatMessages(chatId);
-  // const chatMessages = [
-  //   {
-  //     id: "8e8ce448-1c9d-48ef-85ab-933ecf25293b",
-  //     author: "ba791977-daa1-45e3-b191-58ad57bc997f",
-  //     chatId: "b8264923-619d-470f-8911-816a1468de4c",
-  //     text: "hi again",
-  //     status: "live",
-  //     date: `2024-10-20T14:24:48.245Z`,
-  //     dateEdited: `2024-10-20T14:24:48.245Z`,
-  //   },
-  // ];
-  // async function getChatIcon() {
-  //   let icon: Icon | null = null;
-  //   if (activeChat.type === "private_chat") {
-  //     const otherMemberId = activeChat.members.find((m) => m !== auth.id);
-  //     const otherMember: User = otherMemberId && (await getUser(otherMemberId));
-  //     if (otherMember.icon) {
-  //       icon = otherMember.icon;
-  //     }
-  //   } else {
-  //     icon = activeChat.icon;
-  //   }
-  //   return icon;
-  // }
-  // const chatIcon = await getChatIcon();
 
   return { chatMessages, theChat };
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {
+  console.log("run action")
   const auth = await authenticator.isAuthenticated(request);
   const chatId = params.chatId;
   const io = getIO();
   const body = await request.formData();
   const text = body.get("text") as string;
   // console.log("text", text);
+  let response: Response = { success: false, data: { text: text }, error: "Could not deliver message" }
   if (auth && chatId) {
     try {
       const newMessage = await createNewMessage(auth, chatId, text, "live");
@@ -206,11 +212,17 @@ export async function action({ request, params }: ActionFunctionArgs) {
       io.to(chatId).emit("receive-message", {
         newMessage,
       });
-      return { success: true, newMessage };
+      // return { success: true, newMessage };
+      response = {
+        success: true,
+        data: {
+          text: ""
+        },
+        error: null
+      }
     } catch (error) {
       console.error("Error creating message:", error);
-      return { success: false, error: "Failed to create message" };
     }
   }
-  return { success: false, error: "Invalid authentication or chat ID" };
+  return json(response);
 }

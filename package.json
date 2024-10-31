@@ -30,7 +30,8 @@
     "sass": "^1.79.4",
     "scss": "^0.2.4",
     "socket.io": "^4.8.0",
-    "socket.io-client": "^4.8.0"
+    "socket.io-client": "^4.8.0",
+    "ts-node": "^10.9.2"
   },
   "devDependencies": {
     "@remix-run/dev": "^2.12.1",
@@ -61,6 +62,7 @@
     "node": ">=20.0.0"
   },
   "prisma": {
-    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"}  prisma/seed.js"
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"}  prisma/seed.js",
+    "clear": "ts-node --compiler-options {\"module\":\"CommonJS\"}  prisma/clear.js"
   }
 }

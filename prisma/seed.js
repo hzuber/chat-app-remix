@@ -64,20 +64,7 @@ async function main() {
       iconIcon: null,
       description: null,
       type: "private_chat",
-      lastSent: "6e90b4e3-e879-42f8-b12b-f25879a53c35",
-    },
-  });
-  const alicemessage = await prisma.message.upsert({
-    where: { id: "6e90b4e3-e879-42f8-b12b-f25879a53c35" },
-    update: {},
-    create: {
-      id: "6e90b4e3-e879-42f8-b12b-f25879a53c35",
-      author: "c8941aae-484c-4ea7-ac83-be12012c19cc",
-      date: new Date("2024-10-22 17:29:57.000"),
-      chatId: "576822fe-e592-4907-adf0-3724e3a28c30",
-      text: "This is the first message in alice and bob's chat",
-      dateEdited: null,
-      status: "live",
+      lastSent: null,
     },
   });
   const aliceChat1 = await prisma.userChat.upsert({
@@ -134,8 +121,34 @@ async function main() {
   });
 }
 
+async function addLastSent(){
+  const alicemessage = await prisma.message.upsert({
+    where: { id: "6e90b4e3-e879-42f8-b12b-f25879a53c35" },
+    update: {},
+    create: {
+      id: "6e90b4e3-e879-42f8-b12b-f25879a53c35",
+      author: "c8941aae-484c-4ea7-ac83-be12012c19cc",
+      date: new Date("2024-10-22 17:29:57.000"),
+      chatId: "576822fe-e592-4907-adf0-3724e3a28c30",
+      text: "This is the first message in alice and bob's chat",
+      dateEdited: null,
+      status: "live",
+    },
+  });
+  const updateBobAndAliceChat = await prisma.chat.update({
+    where:{
+      id:"576822fe-e592-4907-adf0-3724e3a28c30"
+    },
+    data:{
+      lastSent:"6e90b4e3-e879-42f8-b12b-f25879a53c35"
+    }
+  })
+}
+
 main()
   .then(async () => {
+    await addLastSent()
+  }).then(async () => {
     await prisma.$disconnect();
   })
   .catch(async (e) => {

@@ -1,7 +1,8 @@
 export const translateDates = (date: Date) => {
   const newDate = new Date(date);
+  const minutes = (newDate.getMinutes() < 10 ? "0" : "") + newDate.getMinutes()
   const showTime = date
-    ? `${newDate.getHours()}:${newDate.getMinutes()}`
+    ? `${newDate.getHours()}:${minutes}`
     : null;
   const todaysDate = new Date();
   const isToday = date

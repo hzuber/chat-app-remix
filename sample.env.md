@@ -1,0 +1,1 @@
+DATABASE_URL="mysql://username:password@host:port/chat_app" (make sure you have a schema named chat_app)
