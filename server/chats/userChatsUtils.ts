@@ -146,6 +146,7 @@ export async function markMessageRead(userChatId: string, messageId: string) {
     throw new Error("Could not find message");
   }
   const message = prismaMessageToMessage(lastReadMessage);
+  console.log("utils message marked read")
   const updatedData: Partial<UserChat> = {
     lastRead: message,
   };

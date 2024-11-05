@@ -1,35 +1,15 @@
-// import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { authenticator } from "server/services/auth.server";
-// import {
-//   useLoaderData,
-//   Form,
-//   useActionData,
-//   useFetcher,
-// } from "@remix-run/react";
-// import { FormEvent, useContext, useEffect, useMemo, useState } from "react";
-// import { socketContext } from "~/socket.context";
-// import { useUserContext } from "~/contexts/userContext";
-import { createChatObject, getChat } from "server/chats/utils";
-import { ActionResponse, Chat, ChatObject, Icon, Message, Response, User, UserChat } from "types";
+import { createChatObject } from "server/chats/utils";
+import { ChatObject, Message, Response, UserChat } from "types";
 import { createNewMessage, getChatMessages } from "server/messages/utils";
-// import MessageContainer from "~/components/MessageContainer/MessageContainer";
-// import { UserIcon } from "~/components/UserIcon";
 import { getIO } from "socket.server";
-// import { getUser } from "server/users/utils";
-// import { useChatContext } from "~/contexts/chatContext";
-
-import { useFetcher, useLoaderData, Form, useSubmit, useActionData } from "@remix-run/react";
-import { useContext, useEffect, useMemo, useState } from "react";
-// import { socketContext } from "~/socket.context";
-// import { useUserContext } from "~/contexts/userContext";
-// import MessageContainer from "~/components/MessageContainer/MessageContainer";
+import { useFetcher, useLoaderData, Form, useActionData } from "@remix-run/react";
+import { useContext, useEffect, useState } from "react";
+import { socketContext } from "~/socket.context";
 import { UserIcon } from "~/components/UserIcon";
-// import { useChatContext } from "~/contexts/chatContext";
 import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
-import SingleMessage from "~/components/MessageContainer/SingleMessage";
 import { ChatMessageContainer } from "~/components/MessageContainer/ChatMessageContainer";
-import { text } from "express";
-import { useUserContext } from "~/contexts/userContext";
+import { markMessageRead } from "server/chats/userChatsUtils";
 
 function parseMessageDates(
   message: Omit<Message, "date" | "dateEdited"> & {
@@ -45,98 +25,58 @@ function parseMessageDates(
 }
 
 export default function ActiveChat() {
-  // const socket = useContext(socketContext);
-  // const fetcher = useFetcher();
-  const { user } = useUserContext();
-  // const { activeChat, setActiveChat } = useChatContext();
-  // const chat = activeChat?.chat;
-  // const fetcherData = useFetcher<typeof loader>();
-  // console.log("fetcherData", fetcherData);
-  // const newChatMessages = fetcherData.data?.chatMessages;
+  const socket = useContext(socketContext);
   const { theChat, chatMessages } = useLoaderData<typeof loader>();
   const [newMessageText, setNewMessageText] = useState("");
   const [messages, setMessages] = useState<Message[]>();
-  const messageHistory = chatMessages.map(parseMessageDates);
-  const submit = useSubmit()
   const fetcher = useFetcher()
   const actionData = useActionData<typeof action>();
-  // const isPrivate = activeChat?.chat.type === "private_chat";
+  let last = theChat?.userChat?.lastRead
+  const lastReadDate = last && new Date(last.date)
+  const otherUserChat = theChat?.otherMemberUserChat as UserChat
+  const lastReadMessage = { ...last, date: lastReadDate } as Message
 
-  const clickSubmit = (target: EventTarget & HTMLFormElement, text: string) => {
+  const clickSubmit = (text: string) => {
     setNewMessageText("")
-    const mess: Message = {
-      id: "0000",
-      author: user ? user.id : "i-am-the-author",
-      date: new Date(),
-      chatId: theChat ? theChat.chat.id : "chatId",
-      text: text,
-      dateEdited: null,
-      status: "live"
-    }
-    messages ? setMessages([mess, ...messages]) : setMessages([mess])
-    submit(target, { method: "post" });
-    console.log("target", target, "text", text, "actionData", { ...actionData })
+    const formData = new FormData()
+    formData.append("text", text)
+    formData.append("action", "send-message")
+    fetcher.submit(formData, { method: "post", action: `/chats/${theChat?.chat.id}` });
   }
 
   useEffect(() => {
-    if (actionData?.data && actionData.success) {
-      console.log("actionData", actionData);
-      actionData.data.text && setNewMessageText(actionData.data.text)
+    if (actionData?.data.text && actionData.success) {
+      setNewMessageText(actionData.data.text)
     }
   }, [actionData]);
 
-  // useEffect(() => {
-  //   if (socket && chat?.id) {
-  //     console.log("Joining chat:", chat.id);
-  //     socket.emit("join-chat", { chatId: chat.id });
-  //   }
-  // }, [socket, chat?.id]);
-
-  // useEffect(() => {
-  //   if (socket) {
-  //     socket.on("receive-message", (newMessage) => {
-  //       console.log("message received", newMessage);
-  //       setMessages((prevMessages) => [...prevMessages, newMessage.newMessage]);
-  //     });
-  //   }
-
-  //   return () => {
-  //     socket && socket.off("receive-message");
-  //   };
-  // }, [socket]);
-
-  // const renderedMessages = useMemo(() => {
-  //   console.log("Rendering message list...");
-  //   return messages.map((mes: Message) => (
-  //     // <MessageContainer key={mes.id} message={mes} isPrivate={isPrivate} />
-
-  //     <MessageContainer key={mes.id} message={mes} isPrivate={false} />
-  //   ));
-  // }, [messages]); // Only dependent on messages
+  useEffect(() => {
+    if (actionData?.data.message && actionData.success) {
+      const messageHistory = chatMessages.map(parseMessageDates);
+      if (chatMessages) {
+        setMessages(messageHistory);
+      }
+    }
+  }, [actionData?.data.message]);
 
   useEffect(() => {
-    // console.log("useEffect");
-    const messageHistory2 = chatMessages.map(parseMessageDates);
+    if (socket && theChat?.chat?.id) {
+      socket.emit("join-chat", { chatId: theChat.chat.id });
+    }
+  }, [socket, theChat?.chat?.id]);
+
+  useEffect(() => {
+    const messageHistory = chatMessages.map(parseMessageDates);
     if (chatMessages) {
-      // console.log("useEffect2", messageHistory2);
-      setMessages(messageHistory2);
+      setMessages(messageHistory);
     }
   }, [chatMessages]);
-
-  // useEffect(() => {
-  //   console.log("fetcher state");
-  //   if (fetcher.state === "submitting" || fetcher.state === "loading") {
-  //     setNewMessageText(""); // Reset the input only when form is being submitted
-  //   }
-  // }, [fetcher.state]);
 
   return (
     <div className="flex p-3 w-full bg-stone-100">
       <div className="flex flex-col relative w-full bg-stone-100 pb-12">
         <div className="mb-4 p-3 w-full bg-white flex items-center">
           <UserIcon
-            // icon={activeChat?.icon?.icon || null}
-            // background={activeChat?.icon?.background || null}
             icon={null}
             background={null}
             width={"30px"}
@@ -152,10 +92,10 @@ export default function ActiveChat() {
             <p className="mx-auto">There are no messages in this chat yet</p>
           </div>
         ) : (
-          <ChatMessageContainer messages={messages} isPrivate={true} />
+          <ChatMessageContainer messages={messages} isPrivate={true} chatId={theChat?.chat.id} lastRead={lastReadMessage} userChatId={theChat?.userChat?.id} otherMember={otherUserChat} />
         )}
         <div className="card-footer input-group absolute bottom-0 w-full">
-          <Form method="post" onSubmit={e => { clickSubmit(e.currentTarget, newMessageText) }}>
+          <Form method="post" onSubmit={() => { clickSubmit(newMessageText) }}>
             <div className="w-full flex items-end">
               <input
                 name="text"
@@ -197,31 +137,50 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {
-  console.log("run action")
   const auth = await authenticator.isAuthenticated(request);
+  let response: Response = { success: false, data: {}, error: "Could not deliver message" }
   const chatId = params.chatId;
   const io = getIO();
   const body = await request.formData();
-  const text = body.get("text") as string;
-  // console.log("text", text);
-  let response: Response = { success: false, data: { text: text }, error: "Could not deliver message" }
-  if (auth && chatId) {
+  const action = body.get("action")
+  if (action === "send-message") {
+    const text = body.get("text") as string;
+    response.data.text = text
+    if (auth && chatId) {
+      try {
+        const newMessage = await createNewMessage(auth, chatId, text, "live");
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        io.to(chatId).emit("receive-message", {
+          newMessage,
+        });
+        response = {
+          success: true,
+          data: {
+            text: ""
+          },
+          error: null
+        }
+      } catch (error) {
+        console.error("Error creating message:", error);
+      }
+    }
+  }
+  if (action === "mark-as-read") {
+    const messageId = body.get("messageId") as string;
+    const userChatId = body.get("userChatId") as string;
     try {
-      const newMessage = await createNewMessage(auth, chatId, text, "live");
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      io.to(chatId).emit("receive-message", {
-        newMessage,
-      });
-      // return { success: true, newMessage };
+      const userChat = await markMessageRead(userChatId, messageId)
       response = {
         success: true,
         data: {
-          text: ""
+          message: userChat.lastRead
         },
         error: null
       }
-    } catch (error) {
-      console.error("Error creating message:", error);
+    }
+
+    catch (error) {
+      console.error("Error marking message read:", error);
     }
   }
   return json(response);

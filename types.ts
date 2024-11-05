@@ -49,10 +49,11 @@ export type ChatObject = {
   name: string | null;
   chat: Chat;
   userChat: UserChat | null;
+  otherMemberUserChat?: UserChat | null
 };
 
 export type Response = {
-  success:boolean;
+  success: boolean;
   error: string | null | undefined;
   data: {
     chat?: Chat | null;
@@ -63,12 +64,12 @@ export type Response = {
     messages?: Message[] | null;
     userChat?: UserChat | null;
     userChats?: UserChat[] | null;
-    text?:string| null
+    text?: string | null
   };
 };
 
-export type ActionResponse={
-  success:boolean;
-  data:{} | null;
+export type ActionResponse = {
+  success: boolean;
+  data: {} | null;
   error: null | string
 }

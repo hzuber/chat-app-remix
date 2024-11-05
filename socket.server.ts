@@ -24,16 +24,17 @@ export const createSocketServer = (server: DefaultEventsMap | undefined) => {
         io && io.to(newMessage.chatId).emit("receive-message", newMessage);
       });
 
-      socket.on("message_read", ({ messageId, chatId }) => {
+      socket.on("message_read", ({ messageId, chatId, userChatId }) => {
+        console.log("message read", messageId, chatId, userChatId)
         if (!chatId || !messageId) {
           console.error(
             "Missing data for send-message event",
             messageId,
-            chatId
+            chatId, userChatId
           );
           return;
         }
-        io && io.to(chatId).emit("message_marked_read", { messageId, chatId });
+        io && io.to(chatId).emit("message_marked_read", { messageId, chatId, userChatId });
       });
 
       socket.on("disconnect", () => {

@@ -68,7 +68,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const auth = await authenticator.isAuthenticated(request, {
     failureRedirect: "/login",
   });
-  const chatObjects: ChatObject[] = [];
+  const chatObjs: ChatObject[] = [];
   const allUsers = await getAllUsers();
   const users: User[] = allUsers.filter((u: User) => u.id !== auth.id);
   // console.log("users", users);
@@ -78,9 +78,29 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const usersChats = await getUsersUserChats(auth.id);
   for await (const chat of usersChats) {
     const obj = await createChatObject(chat.chatId, auth.id);
-    chatObjects.push(obj);
+    chatObjs.push(obj);
   }
-  // console.log(chatObjects);
+  const sortChats = (chat1: ChatObject, chat2: ChatObject) => {
+    const date1 = chat1.chat.lastSent && new Date(chat1.chat.lastSent?.date)
+    const date2 = chat2.chat.lastSent && new Date(chat2.chat.lastSent?.date)
+    if (!date1 || !date2) {
+      return 0
+    }
+    if (date1 < date2) {
+      return 1
+    }
+    if (date1 > date2) {
+      return -1
+    }
+    return 0
+  }
+
+  const sortedChats = () => {
+    chatObjs?.sort((a, b) => sortChats(a, b))
+    return chatObjs
+  }
+
+  const chatObjects = sortedChats()
   return { allUsers, users, activeChat, usersChats, chatObjects };
 }
 

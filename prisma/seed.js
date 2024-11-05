@@ -121,7 +121,7 @@ async function main() {
   });
 }
 
-async function addLastSent(){
+async function addLastSent() {
   const alicemessage = await prisma.message.upsert({
     where: { id: "6e90b4e3-e879-42f8-b12b-f25879a53c35" },
     update: {},
@@ -136,11 +136,19 @@ async function addLastSent(){
     },
   });
   const updateBobAndAliceChat = await prisma.chat.update({
-    where:{
-      id:"576822fe-e592-4907-adf0-3724e3a28c30"
+    where: {
+      id: "576822fe-e592-4907-adf0-3724e3a28c30"
     },
-    data:{
-      lastSent:"6e90b4e3-e879-42f8-b12b-f25879a53c35"
+    data: {
+      lastSent: "6e90b4e3-e879-42f8-b12b-f25879a53c35"
+    }
+  })
+  const updateBobUserChat = await prisma.userChat.update({
+    where: {
+      id: "2be8c98b-3333-4b49-af74-4ff7dce54978"
+    },
+    data: {
+      lastRead: "6e90b4e3-e879-42f8-b12b-f25879a53c35"
     }
   })
 }

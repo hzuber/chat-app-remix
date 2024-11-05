@@ -8,6 +8,7 @@
     "dev": "remix vite:dev",
     "convertSVG": "node svgTransformer.cjs",
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
+    "prisma-clear": "ts-node  prisma/clear.js",
     "start": "remix-serve ./build/server/index.js",
     "typecheck": "tsc"
   },
@@ -62,7 +63,6 @@
     "node": ">=20.0.0"
   },
   "prisma": {
-    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"}  prisma/seed.js",
-    "clear": "ts-node --compiler-options {\"module\":\"CommonJS\"}  prisma/clear.js"
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"}  prisma/seed.js"
   }
 }

@@ -8,9 +8,9 @@ async function clearAll() {
   await prisma.user.deleteMany()
 }
 
-main()
+clearAll()
   .then(async () => {
-    await clearAll()
+    await prisma.$disconnect();
   })
   .catch(async (e) => {
     console.error(e);

@@ -14,7 +14,7 @@ import {
   getUserChatFromChatId,
 } from "./userChatsUtils";
 import { createIcon } from "server/general/utils";
-import { prismaChatToChat } from "server/general/prismaMapping";
+import { prismaChatToChat, prismaUserChatToUserChat } from "server/general/prismaMapping";
 
 const prisma = new PrismaClient();
 
@@ -170,6 +170,7 @@ export async function createChatObject(chatId: string, userId: string) {
   let name: string | null;
   const chat = await getChat(chatId);
   const userChat = await getUserChatFromChatId(chatId, userId);
+  let otherMemberUserChat: UserChat | null;
   // const userChat = uChat as PrismaUserChat;
   // const userChat = user.chats?.find((c) => c.chatId === chatId);
   if (!chat) {
@@ -184,21 +185,25 @@ export async function createChatObject(chatId: string, userId: string) {
         },
       },
     });
+    const other = otherMember && await prismaUserChatToUserChat(otherMember)
     const otherUser = otherMember && (await getUser(otherMember.userId));
     if (!otherUser) {
       throw new Error("Cannot find other member");
     }
+    otherMemberUserChat = other ? other : null
     icon = otherUser && otherUser.icon;
     name = otherUser.username ? otherUser.username : otherUser.email;
   } else {
     icon = chat ? chat.icon : null;
     name = chat ? chat.chatName : null;
+    otherMemberUserChat = null
   }
   const chatObject: ChatObject = {
     chat,
     icon,
     name,
     userChat: userChat ? userChat : null,
+    otherMemberUserChat
   };
   return chatObject;
 }
