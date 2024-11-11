@@ -115,41 +115,28 @@ export async function getUser(id: string) {
 }
 
 //update function
-export async function updateUser(id: string, updatedPrismaData: Partial<User>) {
-  console.log("update user", id, updatedPrismaData);
-  // const updatedPrismaData: Partial<PrismaUser> = {};
+export async function updateUser(id: string, updatedData: Partial<User>) {
+  const updatedPrismaData: Partial<PrismaUser> = {};
   const user = await getUser(id);
   if (!user) {
     throw new Error("User not found");
   }
-  // if (updatedData.password) {
-  //   const hashedPassword = await hashPassword(updatedData.password);
-  //   updatedPrismaData.password = hashedPassword;
-  // }
-  // if (updatedData.icon) {
-  //   updatedPrismaData.iconIcon = updatedData.icon.icon;
-  //   updatedPrismaData.iconBg = updatedData.icon.background;
-  // }
-  // if (updatedData.username) {
-  //   updatedPrismaData.username = updatedData.username;
-  // }
+  if (updatedData.password) {
+    const hashedPassword = await hashPassword(updatedData.password);
+    updatedPrismaData.password = hashedPassword;
+  }
+  if (updatedData.icon) {
+    updatedPrismaData.iconIcon = updatedData.icon.icon;
+    updatedPrismaData.iconBg = updatedData.icon.background;
+  }
+  if (updatedData.username) {
+    updatedPrismaData.username = updatedData.username;
+  }
   const updatedPrismaUser: PrismaUser = await prisma.user.update({
     where: {
       id: id,
     },
     data: {
-      // password: updatedPrismaData.password
-      //   ? updatedPrismaData.password
-      //   : user.password,
-      // username: updatedPrismaData.username
-      //   ? updatedPrismaData.username
-      //   : user.username,
-      // iconIcon: updatedPrismaData.iconIcon
-      //   ? updatedPrismaData.iconIcon
-      //   : user.icon?.icon,
-      // iconBg: updatedPrismaData.iconBg
-      //   ? updatedPrismaData.iconBg
-      //   : user.icon?.background,
       ...updatedPrismaData,
     },
   });

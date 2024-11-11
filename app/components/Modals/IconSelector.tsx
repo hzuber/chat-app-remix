@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Icons from "../../assets/profile-icons/icons/index";
 import { Icon } from "types";
 import { UserIcon } from "../UserIcon";
@@ -34,27 +34,29 @@ const IconSelection = ({
   onIconSelect,
   onBackgroundSelect,
 }: IconSelectionProps) => {
-  const [selectedIcon, setSelectedIcon] = useState<string | null>(
-    currentIcon?.icon || null
-  );
-  const [selectedBackground, setSelectedBackground] = useState<string | null>(
-    currentIcon?.background || null
-  );
+  const [selectedIcon, setSelectedIcon] = useState<string | null>(null);
+  const [selectedBackground, setSelectedBackground] = useState<string | null>(null);
 
-  // Handle icon selection
-  const handleIconSelect = (iconKey: string) => {
+  const handleIconSelect = useCallback((iconKey: string) => {
     setSelectedIcon(iconKey);
-    console.log("select", selectedIcon);
     onIconSelect(iconKey);
-  };
+  }, [onIconSelect]);
 
-  // Handle icon selection
-  const handleBackgroundSelect = (bg: string) => {
+  const handleBackgroundSelect = useCallback((bg: string) => {
     setSelectedBackground(bg);
-    console.log("select", bg);
     onBackgroundSelect(bg);
-  };
+  }, [onBackgroundSelect]);
 
+  useEffect(() => {
+    if (currentIcon) {
+      setSelectedIcon(currentIcon.icon);
+      setSelectedBackground(currentIcon.background);
+    }
+  }, [currentIcon])
+
+  useEffect(() => {
+    console.log("Selected Icon:", selectedIcon);
+  }, [selectedIcon]);
   return (
     <div>
       <div className="flex w-full mb-6">
@@ -81,11 +83,10 @@ const IconSelection = ({
               >
                 {icons.map((iconElement: JSX.Element) => {
                   const iconKey = iconElement.key as string; // Get the key from each icon
-                  const iconClassNames = `max-w-16 max-h-16 flex justify-center items-center rounded-full p-4 hover:opacity-75 bg-slate-100 border-2 border-solid ${
-                    selectedIcon === iconKey
-                      ? "border-black"
-                      : "border-transparent"
-                  }`;
+                  const iconClassNames = `max-w-16 max-h-16 flex justify-center items-center rounded-full p-4 hover:opacity-75 bg-slate-100 border-2 border-solid ${selectedIcon === iconKey
+                    ? "border-black"
+                    : "border-transparent"
+                    }`;
                   return (
                     <div
                       key={iconKey}
@@ -121,13 +122,12 @@ const IconSelection = ({
                 onKeyDown={() => handleBackgroundSelect(color)}
                 tabIndex={0}
                 role="button"
-                className={`max-w-16 max-h-16 flex justify-center items-center rounded-full p-4 ${color}  border-2 border-solid ${
-                  selectedBackground === color
-                    ? "border-black"
-                    : color === "none"
+                className={`max-w-16 max-h-16 flex justify-center items-center rounded-full p-4 ${color}  border-2 border-solid ${selectedBackground === color
+                  ? "border-black"
+                  : color === "none"
                     ? "border-slate-400 "
                     : "border-transparent"
-                }`}
+                  }`}
               ></div>
             );
           })}
